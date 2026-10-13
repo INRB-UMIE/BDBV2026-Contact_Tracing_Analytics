@@ -1,0 +1,22 @@
+Section,Measure,Estimate,n,Notes
+Contact tracing coverage,Cases with >=1 contact listed,8.8% (8.2-9.4),"717/8,145 cases",Confirmed/probable cases appearing as a source case in the CT data
+Contact tracing coverage,Cases already a listed contact before notification,0.6% (0.4-0.7),"45/8,145 cases",
+Follow-up coverage,Contacts fully followed up (to day 21 of follow-up),24.2% (20.2-28.2),"2,532/10,484 contacts",Closed windows: first follow-up on/before data cut - 21 d. CI: bootstrap by source case (Wilson 23.3-25.0)
+Secondary attack rate,Overall SAR,2.0% (1.4-2.8),"179/8,911 contacts",Linelist confirmed/probable or CT 'case confirmed'/'case validated'. CI: bootstrap by source case (Wilson 1.7-2.3)
+Risk ratio by relationship (vs unknown),Unknown,1 (reference),"SAR 2.4% (61/2,493)",
+Risk ratio by relationship (vs unknown),Spouse,2.80 (1.32-5.98),SAR 6.9% (7/102),
+Risk ratio by relationship (vs unknown),Parent,1.59 (0.99-2.55),SAR 3.9% (23/591),
+Risk ratio by relationship (vs unknown),Child,0.66 (0.40-1.10),"SAR 1.6% (19/1,175)",
+Risk ratio by relationship (vs unknown),Sibling,0.57 (0.36-0.88),"SAR 1.4% (28/2,018)",
+Risk ratio by relationship (vs unknown),Neighbour,0.66 (0.45-0.98),"SAR 1.6% (41/2,532)",
+"Incubation period (gamma fit, days)",Mean (95% CrI),10.4 (8.2-13.2),43 pairs,
+"Incubation period (gamma fit, days)",Median (95% CrI),8.6 (6.5-11.0),,
+"Incubation period (gamma fit, days)",SD (95% CrI),7.5 (5.5-10.9),,
+"Incubation period (gamma fit, days)",95th percentile (95% CrI),24.9 (19.4-34.2),,
+"Incubation period (gamma fit, days)",Parameters,shape 1.923 (1.080-3.210); rate 0.184 (0.101-0.320),,
+"Serial interval (gamma fit, days)",Mean (95% CrI),15.7 (12.4-20.2),49 pairs,
+"Serial interval (gamma fit, days)",Median (95% CrI),13.3 (10.0-17.1),,
+"Serial interval (gamma fit, days)",SD (95% CrI),12.7 (10.1-17.3),,
+"Serial interval (gamma fit, days)",95th percentile (95% CrI),40.0 (32.2-53.0),,
+"Serial interval (gamma fit, days)",Parameters,shape 2.895 (1.932-4.160); rate 0.134 (0.082-0.199) [fitted to delay + 6],,
+Time from source-case notification to first contact follow-up,Mean (days),2.7,692 source cases,Median 2 (IQR 0-5); 140 negative (follow-up dated before notification); 13 outside +/-60 d excluded

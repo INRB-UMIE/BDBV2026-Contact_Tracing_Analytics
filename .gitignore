@@ -48,3 +48,20 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# ---- Contact tracing analytics ----
+# Aggregate outputs (outputs/<DATE>/tables, figures, Word files) ARE committed.
+# derived/ holds person-level (de-identified) outbreak data and fit caches: NEVER commit it.
+derived/
+outputs/**/derived/
+*.rds
+# stray data files outside outputs/
+/*.csv
+/pipelines/**/*.csv
+# temporary / local files
+~$*
+**/stale_from_older_runs/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
