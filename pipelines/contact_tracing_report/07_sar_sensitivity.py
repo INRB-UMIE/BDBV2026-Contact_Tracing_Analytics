@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker
 
 from ctr_paths import D, T, F, FA
 
@@ -148,9 +149,9 @@ nyt = nyt.drop(columns="analysis")[["group", "label", "n_pairs", "n_sources", "k
 nyt.round(3).to_csv(os.path.join(T, "nyankunde_sar_by_definition.csv"), index=False)
 print(nyt.round(2).to_string())
 
-fig = plt.figure(figsize=(7.4, 3.4))
-gs = fig.add_gridspec(1, 2, width_ratios=[1, 1.15], wspace=0.95)
-ax = fig.add_subplot(gs[0])
+fig = plt.figure(figsize=(7.4, 6.6))
+gs = fig.add_gridspec(2, 2, width_ratios=[1, 1.15], height_ratios=[1, 0.9], wspace=0.95, hspace=0.7)
+ax = fig.add_subplot(gs[0, 0])
 ax.set_title("A  'Case validated' vs Nyankunde cases", pad=6)
 days = pd.date_range("2026-05-10", "2026-07-05")
 cvd = Pny.cv_date.value_counts().reindex(days, fill_value=0)
@@ -160,7 +161,7 @@ ax.bar(days, cvd.values, width=0.9, color=ALERT, alpha=.85, label="Contacts reco
 ax.xaxis.set_major_locator(mdates.WeekdayLocator(byweekday=0, interval=2)); ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
 ax.set_ylabel("Per day"); ax.grid(axis="x", visible=False)
 ax.legend(loc="upper center", bbox_to_anchor=(0.45, -0.18), ncol=1, fontsize=BASE * .75)
-ax = fig.add_subplot(gs[1])
+ax = fig.add_subplot(gs[0, 1])
 ax.set_title("B  SAR by definition", pad=6)
 gorder = [g for g, _ in groups]
 colmap = {dl["main"]: INK, dl["strict"]: MAIN, dl["linelist"]: MUTED}
@@ -176,7 +177,34 @@ ax.set_xlabel("SAR, % (95% CI, bootstrap by source case)"); ax.grid(axis="y", vi
 for lab, c in colmap.items():
     ax.plot([], [], "o-", color=c, ms=4, lw=1.1, label=lab)
 ax.legend(loc="upper center", bbox_to_anchor=(0.3, -0.18), ncol=1, fontsize=BASE * .75)
-fig.text(0.01, -0.2, CAP + " Cluster = source in Nyankunde, hospital exposure, contact registered on or before 30 Jun 2026.",
+# ---- C: secondary cases per source case, Nyankunde sources highlighted (cf. additional/offspring_distribution.png)
+ax = fig.add_subplot(gs[1, :])
+ax.set_title("C  Source cases by number of secondary cases, Nyankunde highlighted", pad=6)
+OFF = [("Main (incl. 'case validated')", "secondary_case", INK, ALERT), ("Excl. 'case validated'", "secondary_strict", MUTED, "#f2b79c")]
+ks = {lab: E[col].fillna(False).astype(bool).groupby(E.source_case_person_id).sum() for lab, col, _, _ in OFF}
+is_ny = E.groupby("source_case_person_id").src_health_zone.first().eq("Nyankunde")
+kmax = int(max(k.max() for k in ks.values())); xs = np.arange(kmax + 1); w = 0.42
+orow = []
+for j, (lab, _, c_oth, c_ny) in enumerate(OFF):
+    k = ks[lab]; ny = is_ny.reindex(k.index).fillna(False)
+    tot = np.array([(k == v).sum() for v in xs]); nyk = np.array([((k == v) & ny).sum() for v in xs])
+    orow += [dict(definition=lab, secondary_cases=int(v), source_cases=int(t), nyankunde_source_cases=int(n)) for v, t, n in zip(xs, tot, nyk)]
+    xx = xs + (j - 0.5) * w
+    ax.bar(xx, tot - nyk, width=w, color=c_oth, label=f"{lab}: other zones")
+    ax.bar(xx, nyk, bottom=tot - nyk, width=w, color=c_ny, label=f"{lab}: Nyankunde")
+    for xi, t, n in zip(xx, tot, nyk):
+        if t:
+            ax.text(xi, t, f"{t:,}", ha="center", va="bottom", fontsize=BASE * .55, color=INK if j == 0 else SUB)
+            if n:
+                ax.text(xi, t * 2.1 if t > 1 else 2.6, f"{n}", ha="center", va="bottom", fontsize=BASE * .55, color=ALERT, fontweight="bold")
+pd.DataFrame(orow).to_csv(os.path.join(T, "nyankunde_offspring_distribution.csv"), index=False)
+ax.set_yscale("symlog", linthresh=1); ax.set_ylim(0, 600 * 6)
+ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+ax.set_xlim(-0.7, kmax + 0.7); ax.set_xticks(xs); ax.grid(axis="x", visible=False)
+ax.set_xlabel("Secondary cases among listed contacts"); ax.set_ylabel("Source cases (log scale)")
+ax.legend(loc="upper right", ncol=2, fontsize=BASE * .68)
+fig.text(0.01, 0.0, CAP + " Cluster = source in Nyankunde, hospital exposure, contact registered on or before 30 Jun 2026. "
+         "C: SAR-eligible source cases; dark labels = all source cases, coral labels = of which Nyankunde.",
          color=MUTED, fontsize=BASE * .72, ha="left", va="top", wrap=True)
 fig.savefig(os.path.join(F, "figS5_nyankunde_case_validated.png")); plt.close(fig)
 print("07 done")

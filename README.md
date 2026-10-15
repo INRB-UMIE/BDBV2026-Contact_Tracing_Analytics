@@ -42,7 +42,8 @@ pipelines/contact_tracing_report/
 ├── 07_sar_sensitivity.py            # SAR sensitivity analyses + Nyankunde 'case validated' analysis
 ├── 08_followup_sankey.py            # follow-up retention / daily-status Sankey plots by health zone
 ├── 09_table1.py                     # manuscript Table 1 (tables/table1.csv + table1.docx); needs the R fits from 05
-└── 10_table2.py                     # manuscript Table 2: indicators by province (tables/table2_province.csv + table2.docx)
+├── 10_table2.py                     # manuscript Table 2: indicators by province (tables/table2_province.csv + table2.docx)
+└── 11_offspring_distribution.py     # Fig S9: secondary cases per source (superspreading), negative binomial k, beta-binomial ICC
 ```
 
 Run everything from the repo root:
@@ -71,6 +72,7 @@ pip install -r requirements.txt
 | `figS6_distribution_families.png` | Figure S6 | 05 (R) |
 | `figS7_serial_interval_sensitivity.png` | Figure S7 | 05 (R) |
 | `figS8_incubation_sensitivity.png` | Figure S8 | 05 (R) |
+| `figS9_offspring_distribution.png` | Figure S9 (secondary cases per source; overdispersion) | 11 |
 
 Or run steps one at a time, e.g. `python3 pipelines/contact_tracing_report/02_analysis.py`. Run order: 01 → 02 → (05) → 03 → 04.
 

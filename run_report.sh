@@ -18,5 +18,6 @@ $PY 07_sar_sensitivity.py
 $PY 08_followup_sankey.py
 $PY 09_table1.py
 $PY 10_table2.py
+$PY 11_offspring_distribution.py
 $PY 04_report.py
 echo "Done. Outputs: $($PY -c 'import ctr_paths; print(ctr_paths.OUT_ROOT)')"
