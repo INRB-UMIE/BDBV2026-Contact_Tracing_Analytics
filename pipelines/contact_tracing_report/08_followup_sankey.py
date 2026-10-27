@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import PathPatch
 from matplotlib.path import Path
 
-from ctr_paths import D, T, F, FA
+from ctr_paths import D, T, F, FA, CUT_LABEL
 
 INK, MUTED, ALERT, SUB = "#01454f", "#a3b9bc", "#e0703f", "#4a7378"
 NOFU, CASE = "#d9dedf", "#f2b79c"
@@ -131,7 +131,7 @@ for (key, (a, b), c, txt), y in zip(items, ys):
                 arrowprops=dict(arrowstyle="-", color=c, lw=0.4))
 ax.set_title(f"Follow-up retention over 21 days, by health zone of source case (n = {total:,} contacts with a closed window)",
              loc="left", fontweight="bold", fontsize=BASE * 1.05, color=INK, pad=12)
-fig.text(0.01, -0.02, "Data cut 9 Oct 2026. A contact is 'still followed' on day d if a follow-up result was recorded on day d or later. "
+fig.text(0.01, -0.02, f"Data cut {CUT_LABEL}. A contact is 'still followed' on day d if a follow-up result was recorded on day d or later. "
          "Day 21 labels: still followed / contacts (%). Contacts with no recorded result leave before day 1.",
          color=MUTED, fontsize=BASE * .72, ha="left", va="top", wrap=True)
 fig.savefig(os.path.join(FA, "followup_sankey_retention.png")); plt.close(fig)
@@ -290,7 +290,7 @@ for z, y, c, txt in items:
                 arrowprops=dict(arrowstyle="-", color=c, lw=0.4))
 ax.set_title(f"Daily follow-up status by health zone of source case (n = {total:,} contacts with a closed window)",
              loc="left", fontweight="bold", fontsize=BASE * 1.05, color=INK, pad=12)
-fig.text(0.01, -0.01, f"Data cut 9 Oct 2026. Seen = a follow-up result recorded that day. Coloured ribbons from the shared grey (not followed up) block back to the "
+fig.text(0.01, -0.01, f"Data cut {CUT_LABEL}. Seen = a follow-up result recorded that day. Coloured ribbons from the shared grey (not followed up) block back to the "
          f"coloured blocks = contacts seen again after a missed day ({ever_back:,} contacts at least once). "
          "Contacts with no result on any day stay grey throughout.", color=MUTED, fontsize=BASE * .72, ha="left", va="top", wrap=True)
 fig.savefig(os.path.join(F, "figS2_followup_sankey.png")); plt.close(fig)

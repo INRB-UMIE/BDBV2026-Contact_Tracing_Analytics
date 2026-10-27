@@ -1,12 +1,12 @@
 """
-Step 2: all statistics for the contact-tracing report (data cut 9 Oct 2026).
+Step 2: all statistics for the contact-tracing report (data cut = CT_REPORT_DATE).
 Reads derived/ from 01_harmonise.py. Writes derived/results.json + tables/*.csv
 """
 import os, json
 import numpy as np
 import pandas as pd
 
-from ctr_paths import D, T, REPORT_DATE
+from ctr_paths import D, T, REPORT_DATE, RESULT_ENTRY_CHANGE, ct_last_registration
 
 DATA_DATE = pd.Timestamp(REPORT_DATE)
 FU_DAYS = 21
@@ -28,6 +28,43 @@ def wilson(k, n, z=1.96):
     c = (p + z**2 / (2 * n)) / den
     h = z * np.sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / den
     return (p, max(0, c - h), min(1, c + h))
+
+
+# ---- bootstrap by source case -------------------------------------------------------------
+# Contacts of the same source case are not independent (shared exposure, setting and tracing
+# team), so pair-level proportions also get a 95% CI from resampling SOURCE CASES with
+# replacement (each resampled source brings all of its contacts). Wilson CIs are kept alongside.
+N_BOOT = 2000
+BOOT_SEED = 20261009
+
+
+def boot_weights(sources, seed=BOOT_SEED, B=N_BOOT):
+    """B x S matrix: how many times each source case is drawn in each bootstrap replicate."""
+    rng = np.random.default_rng(seed)
+    S = len(sources)
+    idx = rng.integers(0, S, (B, S))
+    return np.stack([np.bincount(r, minlength=S) for r in idx]).astype(float)
+
+
+def boot_groups(df, outcome, group=None, seed=BOOT_SEED):
+    """Bootstrap-by-source proportions of `outcome` overall (group=None) or per level of `group`.
+    Returns (levels, B x L matrix of replicate proportions)."""
+    d = df.assign(_g="All" if group is None else df[group].fillna("unknown"), _y=df[outcome].astype(float))
+    K = d.pivot_table(index="source_case_person_id", columns="_g", values="_y", aggfunc="sum", fill_value=0)
+    N = d.pivot_table(index="source_case_person_id", columns="_g", values="_y", aggfunc="size", fill_value=0)
+    W = boot_weights(K.index, seed)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        P = (W @ K.values) / (W @ N.values)
+    return list(K.columns), P
+
+
+def pct_ci(x):
+    x = np.asarray(x, float); x = x[np.isfinite(x)]
+    return (np.nan, np.nan) if len(x) == 0 else tuple(np.percentile(x, [2.5, 97.5]))
+
+
+def boot_prop(df, outcome, seed=BOOT_SEED):
+    return pct_ci(boot_groups(df, outcome, None, seed)[1][:, 0])
 
 
 def dsum(x):
@@ -93,7 +130,20 @@ def prov_table(group_case, group_src, group_pair):
                                           if q.fu_ff_eligible.astype(bool).any() else np.nan),
                          fu_n=int(q.fu_ff_eligible.astype(bool).sum()),
                          sar_k=int(qe.secondary_case.sum()), sar_n=len(qe)))
-    return pd.DataFrame(rows)
+    out = pd.DataFrame(rows)
+    # 95% CIs for SAR and % fully followed up: Wilson and bootstrap by source case
+    if "eligible" in pr and "fu_ff_eligible" in pr:
+        qe = pr[pr.eligible].assign(_g=pr[group_pair])
+        qf = pr[pr.fu_ff_eligible.astype(bool)].assign(_g=pr[group_pair], fu_ff_complete=lambda d: d.fu_ff_complete.astype(bool))
+        for pre, dd, yc, kk, nn in [("sar", qe, "secondary_case", "sar_k", "sar_n"), ("fu", qf, "fu_ff_complete", None, None)]:
+            levs, Pb = boot_groups(dd, yc, "_g")
+            Pb = pd.DataFrame(Pb, columns=levs)
+            for i, a in enumerate(out.area):
+                sub_ = dd[dd._g == a]
+                p, lo, hi = wilson(sub_[yc].sum(), len(sub_))
+                blo, bhi = pct_ci(Pb[a]) if a in Pb else (np.nan, np.nan)
+                out.loc[i, [f"{pre}_wilson_lo", f"{pre}_wilson_hi", f"{pre}_boot_lo", f"{pre}_boot_hi"]] = [100 * lo, 100 * hi, 100 * blo, 100 * bhi]
+    return out
 
 # ------------------------------------------------------------------ Section 4 (needed for table)
 reg_con = pr.groupby("contact_person_id").registration.min()
@@ -123,8 +173,8 @@ fu["wk"] = week(fu.followup_date)
 fuw = fu.dropna(subset=["wk"]).groupby("wk").agg(visits=("followup_result", "size"),
                                                   pct_result=("followup_result", lambda s: 100 * s.notna().mean()))
 fuw.to_csv(os.path.join(T, "followup_visits_weekly.csv"))
-R["result_missing_pre_sep14"] = float(100 - fu[fu.followup_date < "2026-09-14"].followup_result.notna().mean() * 100)
-R["result_missing_post_sep14"] = float(100 - fu[fu.followup_date >= "2026-09-14"].followup_result.notna().mean() * 100)
+R["result_missing_pre_sep14"] = float(100 - fu[fu.followup_date < RESULT_ENTRY_CHANGE].followup_result.notna().mean() * 100)
+R["result_missing_post_sep14"] = float(100 - fu[fu.followup_date >= RESULT_ENTRY_CHANGE].followup_result.notna().mean() * 100)
 
 # source notification -> first contact registered
 src["notif_to_reg"] = (src.first_reg - src.notification).dt.days
@@ -216,7 +266,7 @@ R["onset_to_notif_by_month"] = {r["group"]: r["median"] for r in drows if r["lev
 # eligible pairs for SAR: source is linelist confirmed/probable case, follow-up window closed
 # Follow-up window = 21 days from FIRST FOLLOW-UP (irrespective of exposure date).
 # SAR denominator: contacts of confirmed/probable sources whose first follow-up was on or
-# before 18 Sep 2026 (9 Oct data cut - 21 days), i.e. whose 21-day follow-up had ended.
+# before the data cut - 21 days (18 Sep for the 9 Oct cut), i.e. whose 21-day follow-up had ended.
 # Contacts with no follow-up rows start at their registration date.
 FU_WINDOW_START_MAX = DATA_DATE - pd.Timedelta(days=21)
 pr["fu_window_start"] = pr.first_fu.fillna(pr.registration)
@@ -228,7 +278,9 @@ k, n = E.secondary_case.sum(), len(E)
 R["sar_eligible_pairs"] = int(n)
 R["sar_secondary"] = int(k)
 R["sar"] = wilson(k, n)
+R["sar_boot"] = boot_prop(E, "secondary_case")                     # 95% CI, bootstrap by source case (used in text)
 R["sar_strict"] = wilson(E.secondary_strict.sum(), n)            # sensitivity: excl. CT 'case_validated'
+R["sar_strict_boot"] = boot_prop(E, "secondary_strict")
 R["sar_with_cv"] = R["sar"]                                        # main includes CT 'case_validated'
 R["sar_upper"] = wilson(E.secondary_upper.sum(), n)                # sensitivity: + CT 'became suspected case'
 R["sar_sens_validated"] = R["sar_strict"]                          # (04_report.py: now = strict sensitivity)
@@ -257,11 +309,17 @@ def pick_ref(series, y):
 
 
 def risk_table(outcome):
+    """SAR and crude risk ratio per level. CIs: Wilson (SAR) and log-normal Wald (RR), plus
+    bootstrap by source case for both (boot_lo/boot_hi, rr_boot_lo/rr_boot_hi)."""
     rf = []
     for col, lab in factors.items():
         vc = E[col].fillna("unknown")
         ref = pick_ref(E[col], E[outcome])
         kr, nr = E.loc[vc == ref, outcome].sum(), (vc == ref).sum()
+        levs, Pb = boot_groups(E.assign(**{col: vc}), outcome, col)
+        Pb = pd.DataFrame(Pb, columns=levs)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            RRb = Pb.div(Pb[ref], axis=0)
         for lev in vc.value_counts().index:
             m = vc == lev
             kk, nn = E.loc[m, outcome].sum(), m.sum()
@@ -274,7 +332,10 @@ def risk_table(outcome):
                 rr = (kk / nn) / (kr / nr)
                 se = np.sqrt(1 / kk - 1 / nn + 1 / kr - 1 / nr)
                 rl, rh = rr * np.exp(-1.96 * se), rr * np.exp(1.96 * se)
-            rf.append(dict(factor=lab, level=lev, n=int(nn), k=int(kk), sar=p, lo=lo, hi=hi, rr=rr, rr_lo=rl, rr_hi=rh, ref=lev == ref))
+            blo, bhi = pct_ci(Pb[lev])
+            rblo, rbhi = (np.nan, np.nan) if (lev == ref or np.isnan(rr)) else pct_ci(RRb[lev])
+            rf.append(dict(factor=lab, level=lev, n=int(nn), k=int(kk), sar=p, lo=lo, hi=hi, boot_lo=blo, boot_hi=bhi,
+                           rr=rr, rr_lo=rl, rr_hi=rh, rr_boot_lo=rblo, rr_boot_hi=rbhi, ref=lev == ref))
     rf = pd.DataFrame(rf)
 
     return rf
@@ -285,7 +346,23 @@ rf.to_csv(os.path.join(T, "sar_risk_factors.csv"), index=False)                 
 risk_table("secondary_strict").to_csv(os.path.join(T, "sar_risk_factors_strict.csv"), index=False)  # sensitivity: without CV
 
 
-# multivariable logistic regression (IRLS), cluster-naive SEs
+# multivariable logistic regression (IRLS). CIs: model-based Wald (lo/hi; ignore clustering)
+# and bootstrap by source case (boot_lo/boot_hi; refit on each resample of source cases).
+def irls(Xv, yv, w=None, iters=50):
+    w = np.ones(len(yv)) if w is None else w
+    b = np.zeros(Xv.shape[1])
+    for _ in range(iters):
+        eta = np.clip(Xv @ b, -30, 30)
+        mu = 1 / (1 + np.exp(-eta))
+        Wt = w * mu * (1 - mu)
+        H = Xv.T @ (Xv * Wt[:, None]) + 1e-8 * np.eye(len(b))
+        step = np.linalg.solve(H, Xv.T @ (w * (yv - mu)))
+        b += step
+        if np.max(np.abs(step)) < 1e-8:
+            break
+    return b, H
+
+
 def logit(df, y, cols):
     X = pd.get_dummies(df[cols].fillna("unknown"), drop_first=False).astype(float)
     # drop reference = most common level of each factor
@@ -300,18 +377,17 @@ def logit(df, y, cols):
     X.insert(0, "const", 1.0)
     yv = df[y].astype(float).values
     Xv = X.values
-    b = np.zeros(Xv.shape[1])
-    for _ in range(50):
-        eta = Xv @ b
-        mu = 1 / (1 + np.exp(-eta))
-        W = mu * (1 - mu)
-        H = Xv.T @ (Xv * W[:, None]) + 1e-8 * np.eye(len(b))
-        step = np.linalg.solve(H, Xv.T @ (yv - mu))
-        b += step
-        if np.max(np.abs(step)) < 1e-8:
-            break
+    b, H = irls(Xv, yv)
     se = np.sqrt(np.diag(np.linalg.inv(H)))
-    out = pd.DataFrame({"term": X.columns, "OR": np.exp(b), "lo": np.exp(b - 1.96 * se), "hi": np.exp(b + 1.96 * se)})
+    # bootstrap by source case: row weight = number of times its source was drawn
+    srcs = df.source_case_person_id.values
+    usrc, inv = np.unique(srcs, return_inverse=True)
+    W = boot_weights(usrc)
+    bb = np.array([irls(Xv, yv, W[i, inv], iters=30)[0] for i in range(len(W))])
+    bb = np.clip(bb, -20, 20)       # replicates with complete separation in sparse levels
+    blo, bhi = np.percentile(bb, [2.5, 97.5], axis=0)
+    out = pd.DataFrame({"term": X.columns, "OR": np.exp(b), "lo": np.exp(b - 1.96 * se), "hi": np.exp(b + 1.96 * se),
+                        "boot_lo": np.exp(blo), "boot_hi": np.exp(bhi)})
     return out[out.term != "const"]
 
 mv = logit(E, "secondary_case", ["contact_type", "case_circumstances", "relationship_to_case", "src_province", "source_died", "reg_month"])
@@ -382,8 +458,9 @@ R["fu21_complete"] = wilson(pc.fu21_complete.astype(bool).sum(), len(pc))
 R["fu21_complete_day20"] = float(((pc.fu_last_day >= 20) | (pc.secondary_case & (pc.last_result_date >= pc.detect_date - pd.Timedelta(days=1)))).mean())
 R["fu21_no_result"] = int(pc.last_result_date.isna().sum())
 # Adjusted version including open windows: required follow-up day = min(21, days observable to CT cut).
-# CT cut = 4 Oct 2026 (last CT registration date; result entry thins out after this).
-CT_CUT = pd.Timestamp("2026-10-04")
+# CT cut = last CT registration date in the data (4 Oct for the 9 Oct cut; result entry thins out after this).
+CT_CUT = ct_last_registration(pr.registration)
+R["ct_last_registration"] = str(CT_CUT.date())
 pr["fu_target_day"] = np.minimum(21, (CT_CUT - pr.last_contact).dt.days)
 pr["fu_adj_eligible"] = pr.last_contact.notna() & (pr.fu_target_day >= 2)
 pr["fu_adj_complete"] = np.where(
@@ -406,7 +483,7 @@ R["fu_lastexp_complete"] = R["fu_adj_complete"]
 # contacts with no follow-up rows start at registration (and are incomplete).
 # Secondary cases: complete if followed up to detection (as before).
 # Only contacts whose day 21 of follow-up had passed by the data cut are included
-# (first follow-up on or before 18 Sep 2026 = 9 Oct - 21 days), so no shortened targets.
+# (first follow-up on or before data cut - 21 days), so no shortened targets.
 FU_START_MAX = DATA_DATE - pd.Timedelta(days=21)
 pr["fu_start"] = pr.first_fu.fillna(pr.registration)
 pr["fu_ff_target"] = 20
@@ -418,6 +495,7 @@ pr.loc[~pr.fu_ff_eligible, "fu_ff_complete"] = np.nan
 pf = pr[pr.fu_ff_eligible].assign(fu_month=lambda d: d.fu_start.dt.to_period("M").astype(str),
                                   fu_ff_complete=lambda d: d.fu_ff_complete.astype(bool))
 R["fu_adj_complete"] = wilson(pf.fu_ff_complete.sum(), len(pf))
+R["fu_complete_boot"] = boot_prop(pf, "fu_ff_complete")            # 95% CI, bootstrap by source case (used in text)
 R["fu_adj_n_open"] = 0
 R["fu_ff_start_max"] = str(FU_START_MAX.date())
 t21 = pf.groupby(["src_province", "src_health_zone", "fu_month"]).fu_ff_complete.agg(n="size", k="sum").reset_index().rename(columns={"fu_month": "lc_month"})
@@ -432,7 +510,10 @@ pt = prov_table("province", "province", "src_province")
 nat = dict(area="National", cases=len(cases), deaths=int(cases.died.sum()),
            pct_cases_source=100 * cases.is_source.mean(), pct_cases_prev_contact=100 * cases.prev_contact.mean(),
            source_cases=len(src), contacts=pr.contact_person_id.nunique(), med_contacts=src.n_contacts.median(),
-           pct_fu_complete=100 * pf.fu_ff_complete.mean(), fu_n=len(pf), sar_k=int(E.secondary_case.sum()), sar_n=len(E))
+           pct_fu_complete=100 * pf.fu_ff_complete.mean(), fu_n=len(pf), sar_k=int(E.secondary_case.sum()), sar_n=len(E),
+           sar_wilson_lo=100 * R["sar"][1], sar_wilson_hi=100 * R["sar"][2], sar_boot_lo=100 * R["sar_boot"][0], sar_boot_hi=100 * R["sar_boot"][1],
+           fu_wilson_lo=100 * R["fu_adj_complete"][1], fu_wilson_hi=100 * R["fu_adj_complete"][2],
+           fu_boot_lo=100 * R["fu_complete_boot"][0], fu_boot_hi=100 * R["fu_complete_boot"][1])
 pt = pd.concat([pt, pd.DataFrame([nat])], ignore_index=True)
 # include sources from provinces without cases
 pt.to_csv(os.path.join(T, "province_table.csv"), index=False)

@@ -1,0 +1,14 @@
+Section,Measure,Estimate,n,Notes
+Contact tracing coverage,Cases with >=1 contact listed,8.9% (8.3-9.5),"795/8,953 cases",Confirmed/probable cases appearing as a source case in the CT data
+Contact tracing coverage,Cases already a listed contact before notification,0.5% (0.4-0.7),"48/8,953 cases",
+Follow-up coverage,Contacts fully followed up (to day 21 of follow-up),22.2% (18.7-26.1),"2,869/12,899 contacts",Closed windows: first follow-up on/before data cut - 21 d. CI: bootstrap by source case (Wilson 21.5-23.0)
+Secondary attack rate,Overall SAR,1.8% (1.3-2.4),"197/10,839 contacts",Linelist confirmed/probable or CT 'case confirmed'/'case validated'. CI: bootstrap by source case (Wilson 1.6-2.1)
+Risk ratio by relationship (vs unknown),Unknown,1 (reference),"SAR 2.1% (71/3,384)",
+Risk ratio by relationship (vs unknown),Spouse,2.78 (0.89-6.56),SAR 5.8% (7/120); Wald CI 1.31-5.91,
+Risk ratio by relationship (vs unknown),Parent,1.65 (0.80-3.54),SAR 3.5% (23/665); Wald CI 1.04-2.62,
+Risk ratio by relationship (vs unknown),Child,0.72 (0.26-1.72),"SAR 1.5% (20/1,319); Wald CI 0.44-1.18",
+Risk ratio by relationship (vs unknown),Sibling,0.67 (0.35-1.36),"SAR 1.4% (33/2,342); Wald CI 0.45-1.01",
+Risk ratio by relationship (vs unknown),Neighbour,0.68 (0.33-1.37),"SAR 1.4% (43/3,009); Wald CI 0.47-0.99",
+Incubation period,Gamma fit,not available - run 05_fit_distributions_epidist.R,,
+Serial interval,Gamma fit,not available - run 05_fit_distributions_epidist.R,,
+Time from source-case notification to first contact follow-up,Mean (days),2.5,767 source cases,Median 2 (IQR 0-5); 156 negative (follow-up dated before notification); 16 outside +/-60 d excluded

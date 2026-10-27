@@ -47,8 +47,9 @@ out = pd.DataFrame({
     "Source cases*": pt.source_cases.map(fmt_int).values,
     "Contacts*": pt.contacts.map(fmt_int).values,
     "Median contacts / source": pt.med_contacts.map(fmtg).values,
-    "% contacts fully followed up": pt.pct_fu_complete.map(fmt0).values,
-    "SAR % (k/n)": [f"{100 * k / n:.1f} ({int(k)}/{int(n):,})" if n else "-" for k, n in zip(pt.sar_k, pt.sar_n)],
+    "% contacts fully followed up (95% CI)": [("-" if pd.isna(p) else f"{p:.0f} ({a:.0f}–{b:.0f})") for p, a, b in zip(pt.pct_fu_complete, pt.fu_boot_lo, pt.fu_boot_hi)],
+    "SAR % (95% CI)": [(f"{100 * k / n:.1f} ({a:.1f}–{b:.1f})" if n else "-") for k, n, a, b in zip(pt.sar_k, pt.sar_n, pt.sar_boot_lo, pt.sar_boot_hi)],
+    "SAR k/n": [(f"{int(k)}/{int(n):,}" if n else "-") for k, n in zip(pt.sar_k, pt.sar_n)],
 })
 out.to_csv(os.path.join(T, "table2_province.csv"), index=False)
 print(out.to_string(index=False))
@@ -65,7 +66,8 @@ foot = (f"*Province of the source case. National totals include {n_kasai} source
         f"{n_unloc} with unlocatable IDs{other_txt}. Follow-up: contacts whose first follow-up was on or before "
         f"{pd.Timestamp(REPORT_DATE) - pd.Timedelta(days=21):%d %b %Y} (21 days before the data cut), with a result recorded to day 21 "
         "of follow-up (secondary cases: to detection). SAR: contacts of confirmed/probable source cases in that group; secondary case = "
-        "confirmed/probable in the linelist or CT 'case confirmed'/'case validated'."
+        "confirmed/probable in the linelist or CT 'case confirmed'/'case validated'. 95% CIs: bootstrap resampling source cases "
+        "(2,000 replicates); Wilson CIs are in tables/province_table.csv. Groups with no secondary cases have a bootstrap CI of 0–0."
         + (f" Bold: highest SAR among provinces with ≥{MIN_N_BOLD} eligible contacts." if bold_row else ""))
 
 # ------------------------------------------------------------------ Word
@@ -88,7 +90,7 @@ def shade(cell, hexcol):
     sh.set(qn("w:val"), "clear"); sh.set(qn("w:color"), "auto"); sh.set(qn("w:fill"), hexcol); tcPr.append(sh)
 
 
-widths = [2.6, 2.0, 2.0, 2.6, 2.7, 2.2, 2.2, 2.4, 2.6, 3.4]
+widths = [2.4, 1.7, 1.7, 2.3, 2.4, 1.9, 1.9, 2.1, 2.8, 2.8, 2.2]
 t = doc.add_table(rows=1, cols=len(out.columns)); t.style = "Table Grid"; t.autofit = False
 lay = OxmlElement("w:tblLayout"); lay.set(qn("w:type"), "fixed"); t._tbl.tblPr.append(lay)
 for i, c in enumerate(out.columns):

@@ -1,6 +1,6 @@
 """
-Step 1: harmonise the 9 Oct 2026 linelist + contact tracing (CT) data to
-person level, logging every discrepancy and the decision taken.
+Step 1: harmonise the linelist + contact tracing (CT) data to
+person level for the data cut CT_REPORT_DATE, logging every discrepancy and the decision taken.
 
 Outputs (in ./derived/):
   persons.csv          one row per linelist person_id (harmonised)
@@ -12,7 +12,7 @@ import os, sys
 import numpy as np
 import pandas as pd
 
-from ctr_paths import DATA_DIR as DATA, D as OUT, REPORT_DATE
+from ctr_paths import DATA_DIR as DATA, D as OUT, REPORT_DATE, CUT_LABEL
 
 DATA_DATE = pd.Timestamp(REPORT_DATE)
 EPI_START = pd.Timestamp("2026-04-01")  # from Processing_Code qc config
@@ -125,7 +125,7 @@ note("linelist", "cases with no onset date", (persons.is_case & persons.onset.is
 # =============================== CONTACT TRACING ==============================
 ct = pd.read_csv(os.path.join(DATA, "contact_tracing_combined_ctsafe.csv"), low_memory=False)
 note("CT", "rows in combined CT file (all exports, incl. aged-out contacts)", len(ct),
-     "combined file used (processed file holds only contacts current on 9 Oct)")
+     f"combined file used (processed file holds only contacts current on {CUT_LABEL})")
 
 # --- recode raw codes that escaped mapping
 recode = {

@@ -1,0 +1,12 @@
+{
+  "data_cut": "2026-10-19",
+  "onset_end": "2026-09-23",
+  "onset_week_start": "2026-05-04",
+  "onset_week_end": "2026-09-14",
+  "last_full_week": "2026-10-12",
+  "min_cases_per_week_lines": 20,
+  "min_cases_per_week_delays": 5,
+  "n_cases_contact_any_time": 115,
+  "fu21_contacts": 13726,
+  "fu21_complete": 3116
+}

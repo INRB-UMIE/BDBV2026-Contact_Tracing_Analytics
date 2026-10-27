@@ -24,7 +24,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches
 
-from ctr_paths import D, T, F, FA
+from ctr_paths import D, T, F, FA, CUT_LABEL, FU_WINDOW_END, fmt_day
 
 INK, MAIN, LIGHT, MUTED, ALERT, SUB, GRID = "#01454f", "#1a8c99", "#e3f0f1", "#a3b9bc", "#e0703f", "#4a7378", "#e6eef0"
 BASE = 8.5
@@ -169,7 +169,7 @@ axes[0].text(0.98, 0.97, f"Main: {m['n_src']} source cases, {m['n_sec']} seconda
                          f"Excl. 'case validated': mean {ds.mean_secondary_per_source:.2f}, k = {ds.nb_k:.2f} ({ds.nb_k_lo:.2f}–{ds.nb_k_hi:.2f}); top 10% → {s_['top10']:.0f}%",
              transform=axes[0].transAxes, ha="right", va="top", fontsize=BASE * .66, color=INK)
 axes[1].legend(h, l, loc="upper right", fontsize=BASE * .72)
-fig.text(0.01, 0.0, "Data cut 9 Oct 2026. Source cases = confirmed/probable cases with ≥1 contact whose follow-up window closed by 18 Sep 2026 (SAR denominator). "
+fig.text(0.01, 0.0, f"Data cut {CUT_LABEL}. Source cases = confirmed/probable cases with ≥1 contact whose follow-up window closed by {fmt_day(FU_WINDOW_END)} (SAR denominator). "
          "Secondary cases found among listed contacts only (a lower bound). B: secondary cases ÷ eligible contacts of each source, in 5-point bins centred on 0, 5, …, 100%; hatched = sources with <5 eligible contacts. Log y-axis.",
          color=MUTED, fontsize=BASE * .7, ha="left", va="top", wrap=True)
 fig.savefig(os.path.join(F, "figS9_offspring_distribution.png")); plt.close(fig)

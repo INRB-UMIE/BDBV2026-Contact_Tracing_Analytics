@@ -16,7 +16,9 @@ from matplotlib.patches import Polygon as MplPoly
 from matplotlib.collections import PatchCollection
 from matplotlib.colors import LinearSegmentedColormap, LogNorm, Normalize
 
-from ctr_paths import D, T, F, FA, geo_file
+from ctr_paths import (D, T, F, FA, geo_file, CUT_LABEL, FU_WINDOW_END, ONSET_END, WK_END, LAST_FULL_WEEK,
+                       FIRST_ONSET_WEEK, FIRST_FULL_WEEK, LAST_COMPLETE_MONTH, MONTHS_COMPLETE, MONTHS_FU,
+                       month_abbr, month_name, fmt_day)
 
 GEO = geo_file()
 
@@ -36,7 +38,7 @@ plt.rcParams.update({
     "xtick.major.width": 0.5, "ytick.major.width": 0.5,
 })
 CMAP = LinearSegmentedColormap.from_list("lshtm", ["#cfe6e8", MAIN, INK])
-CAP = "Data cut 9 Oct 2026; person-level after ID harmonisation."
+CAP = f"Data cut {CUT_LABEL}; person-level after ID harmonisation."
 
 
 def strip(ax, text):
@@ -79,7 +81,7 @@ dl = pd.read_csv(os.path.join(D, "delays_long.csv"))
 dtab = pd.read_csv(os.path.join(T, "delays.csv"))
 rf = pd.read_csv(os.path.join(T, "sar_risk_factors.csv"))
 fuw = pd.read_csv(os.path.join(T, "followup_visits_weekly.csv"), parse_dates=["wk"])
-LAST_FULL_WEEK = pd.Timestamp("2026-09-28")
+# LAST_FULL_WEEK comes from ctr_paths (Monday of the last complete week before the cut)
 
 # ---------------- geometry ----------------
 geo = json.load(open(GEO))
@@ -207,7 +209,8 @@ def make_fig1(layout, outname):
     # ---- B: forest plot, % cases with contacts listed by zone x month
     if "B" in pos:
         ax = fig.add_subplot(pos["B"]); tag(ax, "B", "% of cases with contacts listed, by month of onset")
-        months = [("2026-05", "May", "#a3b9bc"), ("2026-06", "Jun", MAIN), ("2026-07", "Jul", INK), ("2026-08", "Aug", "#c9a227"), ("2026-09", "Sep", ALERT)]
+        MPAL = ["#a3b9bc", MAIN, INK, "#c9a227", ALERT, "#7a5c99", "#5b8c5a", "#a8322d", "#d17fa8"]
+        months = [(m, month_abbr(m), MPAL[i % len(MPAL)]) for i, m in enumerate(MONTHS_COMPLETE)]   # complete months only
         cc = cases.copy(); cc["m"] = cc.case_date.dt.to_period("M").astype(str)
         zones = cases_hz[cases_hz >= 50].sort_values(ascending=False).index.tolist()
 
@@ -259,9 +262,10 @@ def make_fig1(layout, outname):
         hbar(fig.add_subplot(pos["D"]), R["setting"], "Setting", "D", RN)
         hbar(fig.add_subplot(pos["E"]), R["exposure"], "Exposure", "E", RN)
         hbar(fig.add_subplot(pos["F"]), R["rel"], "Relationship", "F", RN)
-    capnote = {"main": "B: zones with ≥50 cases; 95% CI; September right-truncated.", "wide": "B: zones with ≥50 cases; 95% CI; September right-truncated.",
-               "slide_map": "B: zones with ≥50 cases; 95% CI; September right-truncated.", "slide_contacts": "C: source cases; D–F: all source–contact pairs."}[layout]
-    caption(fig, "Data cut 9 Oct 2026. " + capnote, y={"main": 0.035, "wide": 0.02, "slide_map": 0.02, "slide_contacts": -0.12}[layout])
+    trunc = f"B: zones with ≥50 cases; 95% CI; {month_name(LAST_COMPLETE_MONTH)} right-truncated."
+    capnote = {"main": trunc, "wide": trunc,
+               "slide_map": trunc, "slide_contacts": "C: source cases; D–F: all source–contact pairs."}[layout]
+    caption(fig, f"Data cut {CUT_LABEL}. " + capnote, y={"main": 0.035, "wide": 0.02, "slide_map": 0.02, "slide_contacts": -0.12}[layout])
     fig.savefig(outname); plt.close(fig)
 
 
@@ -295,7 +299,7 @@ HAS_HOSP = conf.hospital_admission.notna().sum() > 0
 STEPS = [st for st in STEPS_ALL if HAS_HOSP or st[0] != "Hospitalised"]
 
 
-ONSET_END = pd.Timestamp("2026-09-13")  # Fig 2A and 2B: last onset date used (>=26 days to data cut)
+# ONSET_END (cut - 26 days) and WK_END (last onset week ending on/before ONSET_END) come from ctr_paths
 
 
 def delay(df, col, lim, start="onset"):
@@ -311,7 +315,7 @@ L = [gs[0]]; Rg = [gs[1]]
 ax = fig.add_subplot(L[0]); tag(ax, "A", "Patient journey: days since symptom onset")
 gap = 0.62
 for i, (lab, col, lim) in enumerate(STEPS):
-    d = delay(conf[conf.onset <= ONSET_END], col, lim)   # onset on/before 13 Sep (right truncation)
+    d = delay(conf[conf.onset <= ONSET_END], col, lim)   # onset on/before ONSET_END (right truncation)
     y = -i * gap
     c = DCOL[lab]
     q1, md, q3, mn = d.quantile(.25), d.median(), d.quantile(.75), d.mean()
@@ -337,7 +341,6 @@ BC = [("Onset → notification", "Notified")] + ([("Onset → hospital admission
 
 # ---- B: by month
 ax = fig.add_subplot(Rg[0]); tag(ax, "B", "Median delay by week of onset")
-WK_END = pd.Timestamp("2026-09-07")     # last onset week (7-13 Sep)
 conf["wk_onset"] = conf.onset.dt.to_period("W-SUN").dt.start_time
 BCOL = {"Onset → notification": "notification", "Onset → hospital admission": "hospital_admission",
         "Onset → lab result": "result_date", "Onset → first contacts listed": "src_reg"}
@@ -345,15 +348,15 @@ for k, lab in BC:
     col = BCOL[k]; lim = (-60, 60) if col == "src_reg" else (0, 60)
     dd = (conf[col] - conf.onset).dt.days
     tmp = pd.DataFrame({"wk": conf.wk_onset, "d": dd})[dd.between(*lim)]
-    tmp = tmp[(tmp.wk >= "2026-05-04") & (tmp.wk <= WK_END)]
+    tmp = tmp[(tmp.wk >= FIRST_ONSET_WEEK) & (tmp.wk <= WK_END)]
     g = tmp.groupby("wk").d.agg(n="size", med="median", q1=lambda x: x.quantile(.25), q3=lambda x: x.quantile(.75))
     g = g[g.n >= 5]
     c = DCOL[lab]
     ax.fill_between(g.index, g.q1, g.q3, color=c, alpha=.15, lw=0)
     ax.plot(g.index, g.med, "-o", color=c, ms=2.5, lw=1.2, label=k.replace("first contacts listed", "contacts registered"))
-ax.set_ylim(bottom=0); ax.set_xlim(pd.Timestamp("2026-05-01"), WK_END + pd.Timedelta(days=7))
+ax.set_ylim(bottom=0); ax.set_xlim(FIRST_ONSET_WEEK - pd.Timedelta(days=3), WK_END + pd.Timedelta(days=7))
 date_axis(ax); ax.set_ylabel("Days (median, IQR)"); ax.legend(fontsize=BASE * .62, loc="upper right")
-caption(fig, CAP + " Delays from onset outside 0–60 days excluded (−60 to 60 for contact dates).\nA: onset on or before 13 Sep (≥26 days to data cut); last contact = latest last-exposure date among the source case's contacts.\nB: weeks with ≥5 cases; onset weeks to 7–13 Sep only (≥26 days follow-up to data cut).", y=-0.06)
+caption(fig, CAP + " Delays from onset outside 0–60 days excluded (−60 to 60 for contact dates)." + f"\nA: onset on or before {fmt_day(ONSET_END, False)} (≥26 days to data cut); last contact = latest last-exposure date among the source case's contacts.\nB: weeks with ≥5 cases; onset weeks to {WK_END.day}–{fmt_day(WK_END + pd.Timedelta(days=6), False)} only (≥26 days follow-up to data cut).", y=-0.06)
 fig.savefig(os.path.join(F, "fig2_patient_journey.png")); plt.close(fig)
 
 # ---- Supplementary: delays by province + known contacts
@@ -406,7 +409,7 @@ def make_fig3(d_mode, outname, wide=False):
         gs = fig.add_gridspec(3, 2, height_ratios=[1.1, 1, 1.8 if d_mode == "heat" else 1.25], hspace=0.62, wspace=0.62)
         pos_a, pos_d = gs[0, :], gs[2, :]
         row2 = gs[1, :].subgridspec(1, 2, width_ratios=[1.15, 1], wspace=0.42)
-    w = wk[wk.index >= "2026-05-11"]
+    w = wk[wk.index >= FIRST_FULL_WEEK]
     ww = w[w.new_cases >= 20]
 
     # A: weekly cases (bars) + % known contact before notification (line, right axis)
@@ -435,7 +438,7 @@ def make_fig3(d_mode, outname, wide=False):
 
     # C: follow-up visits with a result
     ax = fig.add_subplot(row2[1]); tag(ax, "C", "Follow-up visits with a recorded result" if not wide else "Follow-up visits with a recorded result")
-    f = fuw[(fuw.wk >= "2026-05-11") & (fuw.wk <= LAST_FULL_WEEK)]
+    f = fuw[(fuw.wk >= FIRST_FULL_WEEK) & (fuw.wk <= LAST_FULL_WEEK)]
     ax.bar(f.wk, f.visits, width=6, color=LIGHT, edgecolor=MAIN, lw=0.4, label="Follow-up rows")
     ax.set_ylabel("Follow-up visits (rows)", color=MAIN); date_axis(ax); ax.grid(axis="x", visible=False)
     ax2 = ax.twinx(); ax2.plot(f.wk, f.pct_result, "-o", color=ALERT, ms=2.5, lw=1.2, label="% with result recorded")
@@ -447,7 +450,7 @@ def make_fig3(d_mode, outname, wide=False):
     if d_mode == 'heat':
         ax = fig.add_subplot(pos_d); tag(ax, "D", "Contacts fully followed up, by health zone and month of first follow-up")
         t21 = pd.read_csv(os.path.join(T, "fu21_complete_hz_month.csv"))
-        mon = ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"]
+        mon = MONTHS_FU   # month of first follow-up; last month is partial (to FU_WINDOW_END)
         tot = t21.groupby("src_health_zone")[["n", "k"]].sum()
         zones21 = tot[tot.n >= 50].sort_values("n", ascending=False).index.tolist()
         K = t21.pivot_table(index="src_health_zone", columns="lc_month", values="k", aggfunc="sum").reindex(index=zones21, columns=mon)
@@ -470,7 +473,8 @@ def make_fig3(d_mode, outname, wide=False):
         ax.set_xticks(range(len(mon) + 1)); ax.set_xticklabels([pd.Timestamp(m).strftime("%b") for m in mon] + ["All"])
         ax.set_yticks(range(len(zones21))); ax.set_yticklabels(zones21, fontsize=BASE * .7); ax.grid(False)
         for sp in ax.spines.values(): sp.set_color(INK)
-        ax.text(0.0, 1.015, f"Overall {100*R['fu_adj_complete'][0]:.0f}% of {int(sum(v[1] for v in R['fu21_by_month'].values())):,} contacts whose first follow-up was on or before 18 Sep (day 21 reached by the 9 Oct data cut). Sep = first follow-up 1–18 Sep.",
+        ax.text(0.0, 1.015, f"Overall {100*R['fu_adj_complete'][0]:.0f}% of {int(sum(v[1] for v in R['fu21_by_month'].values())):,} contacts whose first follow-up was on or before {fmt_day(FU_WINDOW_END, False)} (day 21 reached by the {fmt_day(FU_WINDOW_END + pd.Timedelta(days=21), False)} data cut). "
+                f"{month_abbr(MONTHS_FU[-1])} = first follow-up 1–{fmt_day(FU_WINDOW_END, False)}.",
                 transform=ax.transAxes, ha="left", va="bottom", fontsize=BASE * .68, color=SUB)
         ax.set_title("D  Contacts fully followed up, by health zone and month of first follow-up", loc="left", pad=15)
 
@@ -478,7 +482,7 @@ def make_fig3(d_mode, outname, wide=False):
         import matplotlib.patheffects as pe
         ax = fig.add_subplot(pos_d)
         t21 = pd.read_csv(os.path.join(T, "fu21_complete_hz_month.csv"))
-        mon = ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"]
+        mon = MONTHS_FU   # month of first follow-up; last month is partial (to FU_WINDOW_END)
         tot = t21.groupby("src_health_zone")[["n", "k"]].sum()
         zl = tot[tot.n >= 150].sort_values("n", ascending=False).index.tolist()[:9]
         K = t21.pivot_table(index="src_health_zone", columns="lc_month", values="k", aggfunc="sum").reindex(index=zl, columns=mon)
@@ -548,7 +552,7 @@ fig = plt.figure(figsize=(7.4, 3.0))
 gs = fig.add_gridspec(1, 2, wspace=0.55)
 ax = fig.add_subplot(gs[0]); tag(ax, "A", "Source cases & contacts per source, by week")
 sw = src.assign(wk=pd.to_datetime(src.wk)).dropna(subset=["wk"]).groupby("wk").n_contacts.agg(n="size", mean="mean", q1=lambda x: x.quantile(.25), q3=lambda x: x.quantile(.75))
-sw = sw[(sw.index >= "2026-05-11") & (sw.index <= LAST_FULL_WEEK)]
+sw = sw[(sw.index >= FIRST_FULL_WEEK) & (sw.index <= LAST_FULL_WEEK)]
 ax.bar(sw.index, sw.n, width=6, color=LIGHT, edgecolor=MAIN, lw=0.4, label="New source cases")
 ax.set_ylabel("New source cases", color=MAIN); date_axis(ax); ax.grid(axis="x", visible=False)
 ax2 = ax.twinx(); sl = sw[sw.n >= 5]
@@ -560,11 +564,11 @@ ax.legend(h1 + h2, l1 + l2, loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol
 
 ax = fig.add_subplot(gs[1]); tag(ax, "B", "Notification → first contact registered")
 src["m"] = src.first_reg.dt.to_period("M").astype(str)
-ms = ["2026-05", "2026-06", "2026-07", "2026-08", "2026-09"]
+ms = MONTHS_COMPLETE
 data = [src.loc[(src.m == m) & src.notif_to_reg.between(-60, 60), "notif_to_reg"].values for m in ms]
 ax.boxplot(data, widths=0.55, patch_artist=True, showfliers=False, medianprops=dict(color=ALERT, lw=1.5),
            boxprops=dict(facecolor=LIGHT, edgecolor=INK, lw=0.6), whiskerprops=dict(color=INK, lw=0.6), capprops=dict(color=INK, lw=0.6))
-ax.set_xticks(range(1, 6)); ax.set_xticklabels([pd.Timestamp(m).strftime("%b") + f"\n(n={len(d)})" for m, d in zip(ms, data)], fontsize=BASE * .75)
+ax.set_xticks(range(1, len(ms) + 1)); ax.set_xticklabels([pd.Timestamp(m).strftime("%b") + f"\n(n={len(d)})" for m, d in zip(ms, data)], fontsize=BASE * .75)
 ax.set_ylabel("Days (by month of registration)"); ax.axhline(0, color=MUTED, lw=0.6); ax.grid(axis="x", visible=False)
 caption(fig, CAP + " A: weeks of first contact registration; line shown for weeks with ≥5 source cases.", y=-0.17)
 fig.savefig(os.path.join(FA, "source_cases_registration_delay.png")); plt.close(fig)
@@ -676,9 +680,13 @@ def make_fig4(c_mode, outname, rf=rf, sar_overall=None, sar_label="linelist case
             ax.text(XR - 0.2, y - 0.1, fac, fontweight="bold", fontsize=BASE * .8, va="bottom", ha="right")
             y -= 1
             for r in d.itertuples():
-                col = ALERT if (r.rr_lo > 1) else (MAIN if not (r.rr_hi < 1) else MUTED)
-                ax.plot([100 * r.lo, 100 * r.hi], [y, y], color=col, lw=1.2)
-                ax.plot(100 * r.sar, y, "s" if r.ref else "o", color=col, ms=4)
+                # colour by the bootstrap-by-source CI of the risk ratio (the CI used in the text)
+                # (bootstrap percentile CIs are unreliable for levels with <5 secondary cases: use the Wald CI there)
+                clo, chi = (r.rr_boot_lo, r.rr_boot_hi) if r.k >= 5 else (r.rr_lo, r.rr_hi)
+                col = ALERT if (clo > 1) else (MAIN if not (chi < 1) else MUTED)
+                ax.plot([100 * r.boot_lo, 100 * r.boot_hi], [y, y], color=col, lw=1.0, alpha=.5, solid_capstyle="butt")   # bootstrap: thin
+                ax.plot([100 * r.lo, 100 * r.hi], [y, y], color=col, lw=2.3, solid_capstyle="round")                      # Wilson: thick
+                ax.plot(100 * r.sar, y, "s" if r.ref else "o", color=col, ms=4, mec="white", mew=0.4, zorder=3)
                 yt.append(y); yl.append(f"{RN.get(r.level, r.level)}  ({r.k}/{r.n:,})")
                 y -= 1
             if bi % 2 == 0:
@@ -688,8 +696,9 @@ def make_fig4(c_mode, outname, rf=rf, sar_overall=None, sar_label="linelist case
         ax.set_yticks(yt); ax.set_yticklabels(yl, fontsize=BASE * .72); ax.set_ylim(y + 0.5, 0.6)
         ax.set_xlabel("SAR, % (95% CI)"); ax.set_xlim(-0.3, XR); ax.grid(axis="y", visible=False)
         ax.plot([], [], "o", color=ALERT, label="Higher than reference"); ax.plot([], [], "o", color=MUTED, label="Lower than reference")
-        ax.plot([], [], "s", color=MAIN, label="Reference group"); legend_bottom(ax, ncol=3)
-        ax.legend(loc="upper center", bbox_to_anchor=(0.45, -0.07), ncol=3, fontsize=BASE * .7)
+        ax.plot([], [], "s", color=MAIN, label="Reference group")
+        ax.plot([], [], color=INK, lw=2.3, solid_capstyle="round", label="95% CI (Wilson)"); ax.plot([], [], color=INK, lw=1.0, alpha=.5, label="95% CI (bootstrap by source case)")
+        ax.legend(loc="upper center", bbox_to_anchor=(0.45, -0.07), ncol=3, fontsize=BASE * .66)
 
     si = pd.read_csv(os.path.join(D, "serial_interval_pairs.csv"))   # all linked pairs (used by panel C)
     if "B" in pos:
@@ -742,7 +751,7 @@ def make_fig4(c_mode, outname, rf=rf, sar_overall=None, sar_label="linelist case
         v = main_inc_data()
         fit_panel(ax, v, "incubation", bins=np.arange(0, 43, 2), xlim=(-1, 42), ylab="Proportion per day")
         ax.set_xlabel("Days")
-    cap_a = " Dashed line = overall SAR." if "A" in pos else ""
+    cap_a = (" A: dashed line = overall SAR; colour = risk ratio vs reference with 95% CI above/below 1 (bootstrap; Wald if <5 secondary cases)." if "A" in pos else "")
     cap_bd = (" B–D: main-analysis pairs (SI-1); C: median difference with bootstrap 95% CI. B, D: lines = fitted gamma (posterior median, 95% CrI), "
               "adjusted for censoring and right truncation; D bars = onset minus midpoint of exposure window.") if "B" in pos else ""
     caption(fig, CAP + cap_a + cap_bd, y={"main": 0.0, "wide": 0.0, "slide_sar": 0.0, "slide_timing": -0.08}[layout])
@@ -773,7 +782,7 @@ make_fig4('cdf', os.path.join(FA, 'fig4_epi_implications_withoutCV.png'), rf=pd.
 hzw = pd.read_csv(os.path.join(T, "weekly_top_hz.csv"), parse_dates=["week"])
 fig, axs = plt.subplots(3, 2, figsize=(7.2, 6.4), sharex=True)
 for ax, hz in zip(axs.flat, R["top_hz"]):
-    d = hzw[(hzw.health_zone == hz) & (hzw.week >= "2026-05-04")].set_index("week").sort_index()
+    d = hzw[(hzw.health_zone == hz) & (hzw.week >= FIRST_ONSET_WEEK)].set_index("week").sort_index()
     ax.bar(d.index, d.new_cases, width=6, color=MUTED, label="New cases")
     ax.bar(d.index, d.new_cases_became_source, width=6, color=INK, label="…of which became source cases")
     ax2 = ax.twinx(); ax2.plot(d.index, d.new_contacts, color=ALERT, lw=1.2, label="New contacts listed")

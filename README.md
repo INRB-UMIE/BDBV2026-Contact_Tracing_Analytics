@@ -22,7 +22,7 @@ Paths are resolved in `pipelines/contact_tracing_report/ctr_paths.py` (Python) a
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `CT_REPORT_DATE` | `2026-10-09` | Which `data/<DATE>/` export to use; also the data cut used for the follow-up and truncation rules |
+| `CT_REPORT_DATE` | most recent `data/<DATE>/` | Which `data/<DATE>/` export to use; also the data cut used for the follow-up and truncation rules |
 | `CT_REPORT_OUT` | `<this repo>/outputs/<DATE>` | Override the output folder |
 | `REFIT` | `FALSE` | `TRUE` ignores cached distribution fits |
 
@@ -43,7 +43,9 @@ pipelines/contact_tracing_report/
 ├── 08_followup_sankey.py            # follow-up retention / daily-status Sankey plots by health zone
 ├── 09_table1.py                     # manuscript Table 1 (tables/table1.csv + table1.docx); needs the R fits from 05
 ├── 10_table2.py                     # manuscript Table 2: indicators by province (tables/table2_province.csv + table2.docx)
-└── 11_offspring_distribution.py     # Fig S9: secondary cases per source (superspreading), negative binomial k, beta-binomial ICC
+├── 11_offspring_distribution.py     # Fig S9: secondary cases per source (superspreading), negative binomial k, beta-binomial ICC
+├── 12_si5_risk_factors.py          # SI-5 table: SAR, crude RR, adjusted OR by factor (bootstrap + Wilson/Wald CIs)
+└── 13_dashboard_tables.py         # aggregate tables for the dashboard's Surveillance and Testing tab (tables/dashboard_*)
 ```
 
 Run everything from the repo root:
@@ -74,7 +76,7 @@ pip install -r requirements.txt
 | `figS8_incubation_sensitivity.png` | Figure S8 | 05 (R) |
 | `figS9_offspring_distribution.png` | Figure S9 (secondary cases per source; overdispersion) | 11 |
 
-Or run steps one at a time, e.g. `python3 pipelines/contact_tracing_report/02_analysis.py`. Run order: 01 → 02 → (05) → 03 → 04.
+Or run steps one at a time, e.g. `python3 pipelines/contact_tracing_report/02_analysis.py`. Run order: 01 → 02 → (05) → 03 → 06–13.
 
 **R packages for step 05:** `dplyr`, `readr`, `tidyr`, `stringr`, `ggplot2`, `brms`, `epidist`, `primarycensored`, `posterior`, `loo`, plus `cmdstanr` (preferred) or `rstan`. The figures and fits use the same `lshtm_theme()` as `BDBV2026-Processing_Code/pipelines/contact_tracing_pipeline/3-pairs-plots.R`.
 
@@ -103,13 +105,22 @@ Or run steps one at a time, e.g. `python3 pipelines/contact_tracing_report/02_an
 
 Full decision log: `derived/decisions_log.csv` in the output folder.
 
-## Hard-coded dates to review for a new data cut
+## Dates and new data cuts
 
-Most cut-offs are derived from `CT_REPORT_DATE`. A few figure and analysis details are still specific to the 9 Oct 2026 cut:
+No dates need editing for a new cut. By default the pipeline uses the most recent `data/<YYYY-MM-DD>/` folder that has both input files; set `CT_REPORT_DATE` to run an older cut.
 
-- **CT registration end (`CT_CUT`, 4 Oct):** used by the follow-up completeness sensitivity analysis in `02_analysis.py`.
-- **Last full week (`LAST_FULL_WEEK`):** set in `03_figures.py`.
-- **Panel date limits and the mid-September onset limit for Figure 2B:** set in `03_figures.py`.
-- **Report wording:** the text in `04_report.py`.
+All cut-dependent dates are worked out from the cut date in `ctr_paths.py` (the R script uses the same rules):
 
-Check these when running a later export.
+| Name | Rule | 9 Oct cut |
+|---|---|---|
+| `FU_WINDOW_END` | cut − 21 days (SAR denominator, follow-up completeness) | 18 Sep |
+| `ONSET_END` | cut − 26 days (Fig 2 right truncation) | 13 Sep |
+| `WK_END` | last onset week ending on/before `ONSET_END` (Fig 2B) | 7 Sep |
+| `LAST_FULL_WEEK` | Monday of the last complete week before the cut | 28 Sep |
+| `CUT42` | cut − 42 days (serial interval / incubation) | 28 Aug |
+| CT registration end | last CT registration date in the data (step 02) | 4 Oct |
+| Monthly panels | May up to the last complete month (or month of `FU_WINDOW_END` for follow-up panels) | May–Sep |
+
+Fixed outbreak dates that do not change with the cut are kept as named constants: `FIRST_ONSET_WEEK` (4 May), `FIRST_FULL_WEEK` (11 May), `RESULT_ENTRY_CHANGE` (14 Sep, when follow-up results start going missing), and the Nyankunde cluster window in `07_sar_sensitivity.py`.
+
+The Word report (`04_report.py`) is no longer part of `run_report.sh` and still contains 9 Oct wording.

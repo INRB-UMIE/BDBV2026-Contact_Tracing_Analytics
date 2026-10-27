@@ -13,8 +13,9 @@ Rows (all on the main-manuscript definitions):
   Relative risk by relationship, vs 'unknown' relationship
   Incubation period, serial interval   gamma fits, main analyses (05_fit_distributions_epidist.R)
   Time from source-case notification to first contact follow-up
-CIs: Wilson for proportions, plus 95% bootstrap CI resampling source cases (contacts of the same
-source are not independent) for follow-up coverage and SAR; log-normal (Wald) CIs for risk ratios.
+CIs: Wilson for case-level proportions. For follow-up coverage, SAR and risk ratios the table shows the
+95% bootstrap CI resampling source cases (contacts of the same source are not independent; computed in
+02_analysis.py), with the Wilson / log-normal Wald CI in the notes.
 """
 import os, json
 import numpy as np
@@ -73,7 +74,7 @@ add("Contact tracing coverage", "Cases already a listed contact before notificat
 pf = pr[pr.fu_ff_eligible.astype(bool)].copy()
 pf["fu_ff_complete"] = pf.fu_ff_complete.astype(bool)
 k, n = int(pf.fu_ff_complete.sum()), len(pf)
-p, lo, hi = wilson(k, n); blo, bhi = boot_by_source(pf, "fu_ff_complete")
+p, lo, hi = wilson(k, n); blo, bhi = (100 * x for x in R["fu_complete_boot"])
 add("Follow-up coverage", "Contacts fully followed up (to day 21 of follow-up)",
     f"{p:.1f}% ({blo:.1f}-{bhi:.1f})", f"{k:,}/{n:,} contacts",
     f"Closed windows: first follow-up on/before data cut - 21 d. CI: bootstrap by source case (Wilson {lo:.1f}-{hi:.1f})")
@@ -82,7 +83,7 @@ add("Follow-up coverage", "Contacts fully followed up (to day 21 of follow-up)",
 E = pr[pr.eligible.astype(bool)].copy()
 E["sc"] = E.secondary_case.astype(bool)
 k, n = int(E.sc.sum()), len(E)
-p, lo, hi = wilson(k, n); blo, bhi = boot_by_source(E, "sc")
+p, lo, hi = wilson(k, n); blo, bhi = (100 * x for x in R["sar_boot"])
 add("Secondary attack rate", "Overall SAR", f"{p:.1f}% ({blo:.1f}-{bhi:.1f})", f"{k:,}/{n:,} contacts",
     f"Linelist confirmed/probable or CT 'case confirmed'/'case validated'. CI: bootstrap by source case (Wilson {lo:.1f}-{hi:.1f})")
 
@@ -97,8 +98,9 @@ for r in rel.sort_values("o").itertuples():
     elif np.isnan(r.rr):
         val = "-"
     else:
-        val = f"{r.rr:.2f} ({r.rr_lo:.2f}-{r.rr_hi:.2f})"
-    add("Risk ratio by relationship (vs unknown)", lab, val, f"SAR {100 * r.sar:.1f}% ({int(r.k)}/{int(r.n):,})")
+        val = f"{r.rr:.2f} ({r.rr_boot_lo:.2f}-{r.rr_boot_hi:.2f})"
+    note = f"SAR {100 * r.sar:.1f}% ({int(r.k)}/{int(r.n):,})" + ("" if r.ref or np.isnan(r.rr) else f"; Wald CI {r.rr_lo:.2f}-{r.rr_hi:.2f}")
+    add("Risk ratio by relationship (vs unknown)", lab, val, note)
 
 # ---- incubation & serial interval (gamma, main analyses)
 for q in ["Incubation period", "Serial interval"]:
@@ -169,8 +171,8 @@ for row in t.rows:
     for i, w in enumerate(widths):
         row.cells[i].width = Cm(w)
 doc.add_paragraph().add_run(
-    "CI: Wilson for case-level proportions; for follow-up coverage and SAR, 95% bootstrap CI resampling source cases. "
-    "Risk ratios: log-normal (Wald) CI. Incubation period and serial interval: gamma distributions, posterior median and 95% "
+    "CI: Wilson for case-level proportions; for follow-up coverage, SAR and risk ratios, 95% bootstrap CI resampling source "
+    "cases (2,000 replicates; Wilson / Wald CI in notes). Incubation period and serial interval: gamma distributions, posterior median and 95% "
     "credible interval, fitted with epidist accounting for daily interval censoring and right truncation (main analysis "
     "inclusion criteria; see Methods).").font.size = Pt(7.5)
 out = os.path.join(OUT_ROOT, "table1.docx")

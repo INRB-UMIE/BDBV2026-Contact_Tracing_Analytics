@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker
 
-from ctr_paths import D, T, F, FA
+from ctr_paths import D, T, F, FA, CUT_LABEL, FU_WINDOW_END, fmt_day
 
 INK, MAIN, LIGHT, MUTED, ALERT, SUB, GRID = "#01454f", "#1a8c99", "#e3f0f1", "#a3b9bc", "#e0703f", "#4a7378", "#e6eef0"
 BASE = 8.5
@@ -35,8 +35,9 @@ plt.rcParams.update({
     "axes.titleweight": "bold", "axes.titlesize": BASE * 1.05, "axes.titlelocation": "left", "axes.titlecolor": INK,
     "legend.frameon": False, "figure.facecolor": "white", "savefig.dpi": 300, "savefig.bbox": "tight",
 })
-CAP = "Data cut 9 Oct 2026; person-level after ID harmonisation."
-CLUSTER_END = pd.Timestamp("2026-06-30")
+CAP = f"Data cut {CUT_LABEL}; person-level after ID harmonisation."
+CLUSTER_END = pd.Timestamp("2026-06-30")   # fixed: end of the Nyankunde hospital cluster (not cut-dependent)
+LATE = f"Jul-{FU_WINDOW_END:%b}"            # later Nyankunde period, up to the SAR window end ("Jul-Sep" for the 9 Oct cut)
 N_BOOT = 2000
 rng = np.random.default_rng(20261009)
 
@@ -92,7 +93,7 @@ for i, r in enumerate(sens.itertuples()):
     y = -i
     col = INK if r.analysis == "Main" else ALERT
     ax.plot([r.boot_lo, r.boot_hi], [y, y], color=col, lw=1.2, alpha=.45, solid_capstyle="butt")
-    ax.plot([r.wilson_lo, r.wilson_hi], [y, y], color=col, lw=3.2, solid_capstyle="butt")
+    ax.plot([r.wilson_lo, r.wilson_hi], [y, y], color=col, lw=2.3, solid_capstyle="round")
     ax.plot(r.sar, y, "s" if r.analysis == "Main" else "o", color=col, ms=5, mec="white", mew=0.5, zorder=3)
     ax.text(r.boot_hi + 0.08, y, f"{r.sar:.1f}% ({r.k}/{r.n_pairs:,})", va="center", fontsize=BASE * .8)
 ax.axvline(sens.sar.iloc[0], color=INK, ls=":", lw=0.8)
@@ -101,9 +102,9 @@ ax.set_yticklabels([f"{a}: {l}" if a != "Main" else l for a, l in zip(sens.analy
 ax.set_xlim(0, max(sens.boot_hi) + 1.6); ax.set_ylim(-len(sens) + 0.4, 0.6)
 ax.set_xlabel("Secondary attack rate, %"); ax.grid(axis="y", visible=False)
 ax.set_title("Secondary attack rate: main vs sensitivity analyses", pad=6)
-ax.plot([], [], color=INK, lw=3.2, label="95% CI (Wilson)"); ax.plot([], [], color=INK, lw=1.2, alpha=.45, label="95% CI (bootstrap by source case)")
+ax.plot([], [], color=INK, lw=2.3, solid_capstyle="round", label="95% CI (Wilson)"); ax.plot([], [], color=INK, lw=1.2, alpha=.45, label="95% CI (bootstrap by source case)")
 ax.legend(loc="lower right", ncol=1, fontsize=BASE * .75, frameon=True, framealpha=.95, edgecolor=GRID)
-fig.text(0.01, -0.12, CAP + " Denominator: contacts of confirmed/probable source cases whose first follow-up was on or before 18 Sep 2026.",
+fig.text(0.01, -0.12, CAP + f" Denominator: contacts of confirmed/probable source cases whose first follow-up was on or before {fmt_day(FU_WINDOW_END)}.",
          color=MUTED, fontsize=BASE * .72, ha="left", va="top", wrap=True)
 fig.savefig(os.path.join(F, "figS4_sar_sensitivity.png")); plt.close(fig)
 
@@ -139,8 +140,8 @@ summary.to_csv(os.path.join(T, "nyankunde_cluster_summary.csv"), index=False)
 print(summary.to_string(index=False))
 
 Eny = E[E.src_health_zone.eq("Nyankunde")].copy()
-Eny["period"] = np.where(Eny.registration <= CLUSTER_END, "May-Jun", "Jul-Sep")
-groups = [("Nyankunde, May-Jun", Eny[Eny.period == "May-Jun"]), ("Nyankunde, Jul-Sep", Eny[Eny.period == "Jul-Sep"]),
+Eny["period"] = np.where(Eny.registration <= CLUSTER_END, "May-Jun", LATE)
+groups = [("Nyankunde, May-Jun", Eny[Eny.period == "May-Jun"]), (f"Nyankunde, {LATE}", Eny[Eny.period == LATE]),
           ("Nyankunde cluster (hospital, May-Jun)", E[E.nyk_cluster]), ("All other zones/periods", E[~E.nyk_cluster]),
           ("National", E)]
 dl = {"main": "Main (incl. 'case validated')", "strict": "Excl. 'case validated'", "linelist": "Linelist cases only"}
@@ -168,12 +169,13 @@ colmap = {dl["main"]: INK, dl["strict"]: MAIN, dl["linelist"]: MUTED}
 offs = {dl["main"]: 0.22, dl["strict"]: 0.0, dl["linelist"]: -0.22}
 for r in nyt.itertuples():
     y = -gorder.index(r.group) + offs[r.label]
-    ax.plot([r.boot_lo, r.boot_hi], [y, y], color=colmap[r.label], lw=1.1)
-    ax.plot(r.sar, y, "o", color=colmap[r.label], ms=4, mec="white", mew=0.4)
+    ax.plot([r.boot_lo, r.boot_hi], [y, y], color=colmap[r.label], lw=1.0, alpha=.5, solid_capstyle="butt")    # bootstrap: thin
+    ax.plot([r.wilson_lo, r.wilson_hi], [y, y], color=colmap[r.label], lw=2.3, solid_capstyle="round")          # Wilson: thick
+    ax.plot(r.sar, y, "o", color=colmap[r.label], ms=4, mec="white", mew=0.4, zorder=3)
 ax.set_yticks([-i for i in range(len(gorder))]); ax.set_yticklabels(gorder, fontsize=BASE * .8)
 ax.set_xscale("symlog", linthresh=2); ax.set_xlim(0, 100)
 ax.set_xticks([0, 1, 2, 5, 10, 20, 50, 100]); ax.set_xticklabels(["0", "1", "2", "5", "10", "20", "50", "100"])
-ax.set_xlabel("SAR, % (95% CI, bootstrap by source case)"); ax.grid(axis="y", visible=False)
+ax.set_xlabel("SAR, % (95% CI: thick = Wilson, thin = bootstrap by source case)", fontsize=BASE * .85); ax.grid(axis="y", visible=False)
 for lab, c in colmap.items():
     ax.plot([], [], "o-", color=c, ms=4, lw=1.1, label=lab)
 ax.legend(loc="upper center", bbox_to_anchor=(0.3, -0.18), ncol=1, fontsize=BASE * .75)

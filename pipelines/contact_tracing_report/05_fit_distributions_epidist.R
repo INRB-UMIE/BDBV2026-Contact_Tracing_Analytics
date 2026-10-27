@@ -3,7 +3,7 @@
 # 05_fit_distributions_epidist.R
 #
 # Parametric fits for the SERIAL INTERVAL and INCUBATION PERIOD (BDBV, DRC,
-# data cut 9 Oct 2026): a pre-specified MAIN analysis per quantity plus three
+# data cut = CT_REPORT_DATE): a pre-specified MAIN analysis per quantity plus three
 # sensitivity analyses each (2 x 2 designs), comparing up to five families:
 #   lognormal, gamma, Weibull -> epidist (primarycensored marginal model)
 #   negative binomial         -> brms (integer delay, truncated)
@@ -12,7 +12,7 @@
 #
 # ----------------------------- ANALYSIS DESIGN --------------------------------
 # Cut-off: observations are restricted to those whose INFECTOR's onset was at least
-# 42 days before the data cut (on/before CUTOFF = 28 Aug 2026). The model-based
+# 42 days before the data cut (on/before CUTOFF = data cut - 42 days). The model-based
 # right-truncation adjustment (obs_date = data cut) is kept in ALL fits, since
 # 42 days is shorter than the longest delays considered and the reporting /
 # linkage lag uses up part of the window.
@@ -59,7 +59,7 @@
 #
 # All paths below are relative to OUT_ROOT = <this repo>/outputs/<CT_REPORT_DATE>
 # (same resolution as ctr_paths.py: BDBV_DATA_ROOT or sibling BDBV2026-Processed_Sensitive_Data;
-#  CT_REPORT_DATE default 2026-10-09; CT_REPORT_OUT overrides the folder).
+#  CT_REPORT_DATE default = most recent data/<YYYY-MM-DD>/ with both inputs; CT_REPORT_OUT overrides the folder).
 # Inputs (02_analysis.py): derived/epidist_inputs/serial_interval_pairs.csv,
 #                          derived/epidist_inputs/incubation_cases.csv
 # Outputs:
@@ -113,15 +113,23 @@ resolve_data_root <- function() {
   }
   stop("Could not find BDBV2026-Processed_Sensitive_Data next to ", code_root, "; set BDBV_DATA_ROOT.", call. = FALSE)
 }
-REPORT_DATE <- Sys.getenv("CT_REPORT_DATE", unset = "2026-10-09")
 data_root   <- resolve_data_root()
+latest_cut <- function(root) {
+  req <- c("dhis2_processed_linelist_ctsafe.csv", "contact_tracing_combined_ctsafe.csv")
+  cuts <- sort(list.files(file.path(root, "data"), pattern = "^\\d{4}-\\d{2}-\\d{2}$"))
+  cuts <- cuts[vapply(cuts, function(d) all(file.exists(file.path(root, "data", d, req))), logical(1))]
+  if (!length(cuts)) stop("No data/<YYYY-MM-DD>/ folder with both input files under ", root, call. = FALSE)
+  tail(cuts, 1)
+}
+REPORT_DATE <- Sys.getenv("CT_REPORT_DATE", unset = "")
+if (!nzchar(REPORT_DATE)) REPORT_DATE <- latest_cut(data_root)
 OUT_ROOT    <- Sys.getenv("CT_REPORT_OUT", unset = file.path(code_root, "outputs", REPORT_DATE))
 message("Reading/writing under: ", OUT_ROOT)
 
 # ------------------------------- settings ------------------------------------
 DATA_CUT     <- as.Date(REPORT_DATE)
 CUTOFF_DAYS  <- 42L
-CUTOFF       <- DATA_CUT - CUTOFF_DAYS          # 28 Aug 2026: first event on/before this
+CUTOFF       <- DATA_CUT - CUTOFF_DAYS          # derived from the data cut (28 Aug for the 9 Oct cut)
 SI_MAX       <- 60L
 SI_NEG_MIN   <- -5L                              # negatives kept down to -5 d
 SI_NEG_SHIFT <- 6L                               # SI + 6 >= 1 for positive-support families
