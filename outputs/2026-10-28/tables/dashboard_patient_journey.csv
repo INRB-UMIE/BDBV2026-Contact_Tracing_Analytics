@@ -1,0 +1,8 @@
+step,label,n,mean,median,q1,q3,min_days,max_days,source_cases_only
+notified,Notified,7297,5.36,4.0,2.0,7.0,0,60,False
+hospitalised,Hospitalised,2312,6.21,5.0,3.0,7.0,0,60,False
+sample,Sample taken,7265,8.88,7.0,3.0,13.0,0,60,False
+lab_result,Lab result,7287,9.59,7.0,4.0,13.0,0,60,False
+last_contact,Last contact with any contact,958,8.22,6.0,3.0,11.0,-60,60,True
+first_followed_up,First contact followed up,941,8.73,8.0,3.0,14.0,-60,60,True
+contacts_registered,Contacts registered on database,949,12.46,9.0,6.0,17.0,-60,60,True
