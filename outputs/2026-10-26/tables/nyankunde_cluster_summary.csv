@@ -1,0 +1,16 @@
+item,value
+Pairs ever recorded 'case validated' (all sources),89
+  of which source in Nyankunde,58
+  of which source not located (non-standard ID),26
+  of which hospital exposure,87
+  'case validated' recorded between,16 May and 02 Jun 2026
+  median days from last exposure to 'case validated',4.0
+  median days from 'case validated' to CT registration,11.0
+  found in linelist (any classification),6
+  confirmed/probable in linelist,0
+  with any follow-up row after 'case validated',8
+"Cluster: Nyankunde source, hospital, registered <= 30 Jun - source cases",28
+Cluster: contacts (pairs),395
+Cluster: eligible for SAR,384
+Eligible 'case validated' contacts inside cluster / total,57 / 62
+Nyankunde cases notified 15 May-30 Jun (linelist),95

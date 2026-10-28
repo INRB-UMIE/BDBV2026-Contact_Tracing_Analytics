@@ -1,0 +1,163 @@
+src_province,src_health_zone,lc_month,n,k
+Bas-Uele,Buta,2026-08,58,29
+Bas-Uele,Viadana,2026-08,21,18
+Bas-Uele,Viadana,2026-09,144,142
+Haut-Uele,Boma Mangbetu,2026-08,27,14
+Haut-Uele,Boma Mangbetu,2026-09,109,1
+Haut-Uele,Boma Mangbetu,2026-10,32,1
+Haut-Uele,Dungu,2026-09,1,0
+Haut-Uele,Gombari,2026-08,3,2
+Haut-Uele,Isiro,2026-07,48,45
+Haut-Uele,Isiro,2026-08,562,444
+Haut-Uele,Isiro,2026-09,394,173
+Haut-Uele,Isiro,2026-10,161,3
+Haut-Uele,Pawa,2026-07,13,13
+Haut-Uele,Pawa,2026-08,92,69
+Haut-Uele,Pawa,2026-09,62,48
+Haut-Uele,Pawa,2026-10,1,0
+Haut-Uele,Rungu,2026-10,2,0
+Haut-Uele,Wamba,2026-06,23,23
+Haut-Uele,Wamba,2026-07,4,2
+Haut-Uele,Wamba,2026-08,143,37
+Haut-Uele,Wamba,2026-09,465,74
+Haut-Uele,Wamba,2026-10,128,0
+Ituri,Ariwara,2026-07,27,26
+Ituri,Ariwara,2026-08,70,66
+Ituri,Aru,2026-05,19,17
+Ituri,Aru,2026-06,1,0
+Ituri,Aru,2026-08,9,9
+Ituri,Aru,2026-10,5,5
+Ituri,Aungba,2026-05,3,2
+Ituri,Aungba,2026-06,8,0
+Ituri,Bambu,2026-05,18,7
+Ituri,Bambu,2026-06,46,13
+Ituri,Bambu,2026-07,44,2
+Ituri,Bambu,2026-08,62,5
+Ituri,Biringi,2026-06,8,0
+Ituri,Boga,2026-07,10,0
+Ituri,Boga,2026-08,13,1
+Ituri,Bunia,2026-05,78,27
+Ituri,Bunia,2026-06,441,160
+Ituri,Bunia,2026-07,215,144
+Ituri,Bunia,2026-08,684,176
+Ituri,Bunia,2026-09,120,66
+Ituri,Bunia,2026-10,86,1
+Ituri,Damas,2026-07,21,21
+Ituri,Damas,2026-08,39,32
+Ituri,Damas,2026-09,63,0
+Ituri,Fataki,2026-05,1,1
+Ituri,Gety,2026-05,5,4
+Ituri,Gety,2026-06,46,0
+Ituri,Kambala,2026-05,2,2
+Ituri,Kambala,2026-06,3,3
+Ituri,Kambala,2026-07,69,11
+Ituri,Kilo,2026-05,1,0
+Ituri,Kilo,2026-06,23,0
+Ituri,Kilo,2026-07,4,1
+Ituri,Kilo,2026-09,11,0
+Ituri,Komanda,2026-05,85,77
+Ituri,Komanda,2026-06,301,263
+Ituri,Komanda,2026-07,139,133
+Ituri,Komanda,2026-08,9,8
+Ituri,Komanda,2026-09,72,57
+Ituri,Komanda,2026-10,32,0
+Ituri,Lita,2026-05,39,36
+Ituri,Lita,2026-06,283,233
+Ituri,Lita,2026-07,188,99
+Ituri,Lita,2026-08,15,13
+Ituri,Lita,2026-09,76,24
+Ituri,Lita,2026-10,22,13
+Ituri,Logo,2026-07,2,0
+Ituri,Logo,2026-10,50,0
+Ituri,Lolwa,2026-06,194,1
+Ituri,Lolwa,2026-07,40,4
+Ituri,Lolwa,2026-09,1,1
+Ituri,Lolwa,2026-10,122,0
+Ituri,Mambasa,2026-06,30,0
+Ituri,Mambasa,2026-07,1,0
+Ituri,Mambasa,2026-09,157,53
+Ituri,Mambasa,2026-10,123,108
+Ituri,Mandima,2026-09,5,0
+Ituri,Mangala,2026-05,17,0
+Ituri,Mangala,2026-06,2,1
+Ituri,Mangala,2026-07,20,12
+Ituri,Mangala,2026-08,31,3
+Ituri,Mangala,2026-09,138,2
+Ituri,Mangala,2026-10,50,1
+Ituri,Mongbwalu,2026-05,3,2
+Ituri,Mongbwalu,2026-06,27,21
+Ituri,Mongbwalu,2026-07,69,26
+Ituri,Mongbwalu,2026-08,74,16
+Ituri,Mongbwalu,2026-09,23,6
+Ituri,Mongbwalu,2026-10,39,1
+Ituri,Nia Nia,2026-06,2,2
+Ituri,Nia Nia,2026-07,4,0
+Ituri,Nia Nia,2026-08,2,1
+Ituri,Nia Nia,2026-09,230,125
+Ituri,Nia Nia,2026-10,288,196
+Ituri,Nizi,2026-06,228,3
+Ituri,Nizi,2026-07,239,8
+Ituri,Nizi,2026-08,517,12
+Ituri,Nizi,2026-09,885,4
+Ituri,Nizi,2026-10,168,2
+Ituri,Nyankunde,2026-04,1,1
+Ituri,Nyankunde,2026-05,443,90
+Ituri,Nyankunde,2026-06,309,25
+Ituri,Nyankunde,2026-07,69,45
+Ituri,Nyankunde,2026-08,87,35
+Ituri,Nyankunde,2026-09,296,231
+Ituri,Rwampara,2026-05,321,147
+Ituri,Rwampara,2026-06,763,302
+Ituri,Rwampara,2026-07,1058,502
+Ituri,Rwampara,2026-08,1117,371
+Ituri,Rwampara,2026-09,800,133
+Ituri,Rwampara,2026-10,307,1
+Ituri,Tchomia,2026-06,193,121
+Ituri,Tchomia,2026-07,22,9
+Ituri,Tchomia,2026-08,172,71
+Ituri,Tchomia,2026-09,88,63
+Ituri,Tchomia,2026-10,6,6
+Kasai,Bulape,2026-06,4,0
+Kasai,Bulape,2026-07,16,3
+Kasai,Bulape,2026-08,14,2
+Nord-Kivu,Beni,2026-06,78,2
+Nord-Kivu,Beni,2026-07,85,1
+Nord-Kivu,Beni,2026-08,970,106
+Nord-Kivu,Beni,2026-09,2211,53
+Nord-Kivu,Beni,2026-10,1,0
+Nord-Kivu,Kyondo,2026-05,9,0
+Nord-Kivu,Lubero,2026-07,50,1
+Nord-Kivu,Lubero,2026-08,54,0
+Nord-Kivu,Lubero,2026-09,18,0
+Nord-Kivu,Lubero,2026-10,9,0
+Nord-Kivu,Masereka,2026-06,3,0
+Nord-Kivu,Musienene,2026-06,18,6
+Nord-Kivu,Musienene,2026-07,2,0
+Nord-Kivu,Musienene,2026-09,1,0
+Nord-Kivu,Musienene,2026-10,108,11
+Nord-Kivu,Mutwanga,2026-06,1,0
+Nord-Kivu,Vuhovi,2026-06,8,0
+Sud-Kivu,Miti Murhesa,2026-05,34,6
+Tshopo,Bafwasende,2026-08,1,1
+Tshopo,Bafwasende,2026-09,46,11
+Tshopo,Bafwasende,2026-10,47,0
+Tshopo,Kabondo,2026-08,40,14
+Tshopo,Kabondo,2026-09,60,8
+Tshopo,Kabondo,2026-10,21,19
+Tshopo,Lubunga (Tshopo),2026-07,9,2
+Tshopo,Lubunga (Tshopo),2026-10,1,0
+Tshopo,Makiso Kisangani,2026-06,2,1
+Tshopo,Makiso Kisangani,2026-07,132,80
+Tshopo,Makiso Kisangani,2026-08,186,29
+Tshopo,Makiso Kisangani,2026-09,492,197
+Tshopo,Makiso Kisangani,2026-10,286,2
+Tshopo,Mangobo,2026-06,2,1
+Tshopo,Mangobo,2026-08,58,45
+Tshopo,Mangobo,2026-09,135,66
+Tshopo,Mangobo,2026-10,96,0
+Tshopo,Tshopo,2026-08,10,7
+Tshopo,Tshopo,2026-09,21,9
+Tshopo,Tshopo,2026-10,42,11
+Tshopo,Wanierukula,2026-07,15,12
+Tshuapa,Mompono,2026-08,1,0
+Tshuapa,Monkoto,2026-08,1,0
