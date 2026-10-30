@@ -131,7 +131,7 @@ if all(x is not None for x in G.values()):
             add("Fitted delays (gamma)", f"{c.Quantity}: n", c.n, k.n, "n")
             add("Fitted delays (gamma)", f"{c.Quantity}: mean (95% CrI)", c["Mean (95% CrI)"], k["Mean (95% CrI)"], "days")
 else:
-    add("Fitted delays (gamma)", "not compared: R fits missing for one run (use --fit)", np.nan, np.nan, "")
+    add("Fitted delays (gamma)", "not compared: R fits are not run for the candidate registry (too slow)", np.nan, np.nan, "")
 
 # ---- write table -------------------------------------------------------------------------
 out = pd.DataFrame(rows)

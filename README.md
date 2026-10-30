@@ -123,7 +123,7 @@ Person IDs in the exports come from `person_registry.csv` (confirmed matches onl
 - The run stops if the candidate grouping would split a confirmed person (it must only merge).
 - Counts of re-issued IDs and the extra self-pairs (dropped) are in `registry_candidates/derived/decisions_log.csv`. The original IDs are kept in `*_person_id_confirmed` columns in the derived files.
 - The registry is a single current file, not one per cut. For an older cut it also includes matches confirmed after that export; these rows are counted in the decision log ("exported person_id differs from the registry's current person_id").
-- Add `--fit` to compare the fitted serial-interval and incubation distributions as well.
+- The R distribution fits (step 05) are skipped in the candidate run because they are slow; `--fit` is ignored there. The comparison covers the empirical serial-interval and incubation pairs (counts, mean, median) but not the fitted gamma distributions.
 
 ## Dates and new data cuts
 

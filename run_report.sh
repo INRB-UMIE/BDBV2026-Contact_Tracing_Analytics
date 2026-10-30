@@ -6,7 +6,7 @@
 #                                      # re-issued from person_registry_with_candidates.csv (read-only),
 #                                      # outputs in outputs/<DATE>/registry_candidates/, then compare with
 #                                      # the main run (14_registry_sensitivity.py). Run the main pipeline first.
-#   ./run_report.sh --candidates --fit # same, including the R fits for the candidate run
+#                                      # The R distribution fits (05) are never run here; --fit is ignored.
 # CT_REPORT_DATE defaults to the most recent data/<YYYY-MM-DD>/ folder.
 # Settings via environment variables: CT_REPORT_DATE, BDBV_DATA_ROOT, BDBV_GEO_ROOT, CT_REPORT_OUT, REFIT,
 # CT_PERSON_REGISTRY (set automatically by --candidates)
@@ -30,7 +30,9 @@ fi
 
 $PY 01_harmonise.py
 $PY 02_analysis.py
-if [[ $FIT == 1 ]]; then
+if [[ $FIT == 1 && $CT_PERSON_REGISTRY == candidates ]]; then
+  echo "NOTE: --fit ignored for the candidate-registry run (distribution fits are not part of the registry sensitivity analysis)."
+elif [[ $FIT == 1 ]]; then
   Rscript 05_fit_distributions_epidist.R
 fi
 $PY 03_figures.py
