@@ -12,7 +12,8 @@ import os, sys
 import numpy as np
 import pandas as pd
 
-from ctr_paths import DATA_DIR as DATA, D as OUT, REPORT_DATE, CUT_LABEL
+from ctr_paths import (DATA_DIR as DATA, D as OUT, REPORT_DATE, CUT_LABEL,
+                       PERSON_REGISTRY, CANDIDATE_REGISTRY_FILE)
 
 DATA_DATE = pd.Timestamp(REPORT_DATE)
 EPI_START = pd.Timestamp("2026-04-01")  # from Processing_Code qc config
@@ -21,6 +22,57 @@ log = []
 
 def note(step, item, n, decision):
     log.append(dict(step=step, item=item, n=int(n), decision=decision))
+
+
+# ======================= PERSON REGISTRY (sensitivity) ========================
+# CT_PERSON_REGISTRY=candidates re-issues every person ID from the candidate_person_id
+# column of person_registry_with_candidates.csv, i.e. as if every match suggested by
+# the algorithm (and not rejected) were accepted. The registry file is only read.
+# Default ('confirmed'): IDs are used exactly as exported; no registry file is opened.
+CAND = None
+if PERSON_REGISTRY == "candidates":
+    CAND = pd.read_csv(CANDIDATE_REGISTRY_FILE, dtype=str, keep_default_na=False,
+                       usecols=["candidate_person_id", "person_id", "identifier_type", "original_id"])
+    # the candidate grouping must only MERGE confirmed persons, never split one
+    if (CAND.groupby("person_id").candidate_person_id.nunique() > 1).any():
+        sys.exit("person_registry_with_candidates.csv splits a confirmed person_id across candidates; "
+                 "the candidate registry is not an upper bound of the confirmed one. Stopping.")
+    PID2CAND = CAND.drop_duplicates("person_id").set_index("person_id").candidate_person_id
+    note("registry", "person registry used", 0,
+         "CANDIDATES: IDs re-issued from candidate_person_id (person_registry_with_candidates.csv, read-only)")
+else:
+    note("registry", "person registry used", 0, "CONFIRMED: person IDs as exported (person_registry.csv)")
+
+
+def reissue_ids(df, id_col, pid_col, id_type, step):
+    """Replace df[pid_col] with the candidate person ID (candidate mode only).
+    Looks up (identifier_type, original_id) in the candidate registry; if the original ID is
+    missing or not in the registry, falls back to mapping the exported person_id. Stops if
+    neither works. The exported ID is kept in <pid_col>_confirmed for traceability."""
+    if CAND is None:
+        return df
+    reg = CAND[CAND.identifier_type == id_type].set_index("original_id")
+    by_orig = df[id_col].map(reg.candidate_person_id)
+    reg_pid = df[id_col].map(reg.person_id)
+    n_disagree = (reg_pid.notna() & (reg_pid != df[pid_col])).sum()
+    note(step, f"{pid_col}: exported person_id differs from the registry's current person_id", n_disagree,
+         "candidate ID taken from the registry entry for the original ID (registry is newer than the export)")
+    by_pid = df[pid_col].map(PID2CAND)
+    new = by_orig.fillna(by_pid)
+    n_fallback = (by_orig.isna() & by_pid.notna()).sum()
+    note(step, f"{pid_col}: original {id_col} not in candidate registry", n_fallback,
+         "candidate ID taken via the exported person_id instead")
+    miss = new.isna() & df[pid_col].notna()
+    if miss.any():
+        sys.exit(f"{miss.sum()} rows: {id_col}/{pid_col} not found in the candidate registry by original ID or "
+                 f"person_id (e.g. {df.loc[miss, id_col].head(3).tolist()}). Stopping.")
+    changed = new.notna() & (new != df[pid_col])
+    note(step, f"{pid_col}: rows re-issued to a different (candidate) person ID", changed.sum(),
+         f"{df.loc[changed, pid_col].nunique()} exported IDs -> {new[changed].nunique()} candidate IDs")
+    df = df.copy()
+    df[f"{pid_col}_confirmed"] = df[pid_col]
+    df[pid_col] = new.where(new.notna(), df[pid_col])
+    return df
 
 
 def clean_date(s, name, step):
@@ -34,6 +86,7 @@ def clean_date(s, name, step):
 # =============================== LINELIST ====================================
 ll = pd.read_csv(os.path.join(DATA, "dhis2_processed_linelist_ctsafe.csv"), low_memory=False)
 note("linelist", "rows in linelist export", len(ll), "all alerts (cases, non-cases, unclassified)")
+ll = reissue_ids(ll, "alert_id", "person_id", "alert_id", "linelist")
 note("linelist", "distinct person_id", ll.person_id.nunique(), "unit of analysis = person_id")
 
 # health zone fix: 'Bili' is ambiguous in shapefile; all rows are Bas-Uele
@@ -126,6 +179,8 @@ note("linelist", "cases with no onset date", (persons.is_case & persons.onset.is
 ct = pd.read_csv(os.path.join(DATA, "contact_tracing_combined_ctsafe.csv"), low_memory=False)
 note("CT", "rows in combined CT file (all exports, incl. aged-out contacts)", len(ct),
      f"combined file used (processed file holds only contacts current on {CUT_LABEL})")
+ct = reissue_ids(ct, "source_case_alert_id", "source_case_person_id", "source_case_alert_id", "CT")
+ct = reissue_ids(ct, "contact_id", "contact_person_id", "contact_id", "CT")
 
 # --- recode raw codes that escaped mapping
 recode = {

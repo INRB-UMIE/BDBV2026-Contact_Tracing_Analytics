@@ -17,6 +17,14 @@ Other settings (environment variables):
                   folder that has both input files)
   CT_REPORT_OUT   override the output folder
                   (default CODE_ROOT/outputs/<DATE>, i.e. this repo's outputs/ folder)
+  CT_PERSON_REGISTRY  'confirmed' (default) or 'candidates'.
+                  confirmed : person IDs exactly as they are in the linelist / CT exports
+                              (issued from data/person_registry.csv). No registry file is opened.
+                  candidates: registry sensitivity analysis. IDs are re-issued from the
+                              candidate_person_id column of data/person_registry_with_candidates.csv
+                              (every algorithm-suggested match accepted). That file is only READ;
+                              neither registry file is ever modified. Outputs go to
+                              outputs/<DATE>/registry_candidates/ so main results are untouched.
 
 NOTE: derived/ contains person-level (de-identified) outbreak data and is git-ignored.
 Aggregate tables, figures and Word files in outputs/ are committed.
@@ -70,7 +78,18 @@ def geo_file():
     return os.path.join(root, "build", "drc_health_zones.geojson")
 
 
-OUT_ROOT = os.environ.get("CT_REPORT_OUT", os.path.join(CODE_ROOT, "outputs", REPORT_DATE))
+# --- person registry used for person IDs (see docstring) ----------------------
+PERSON_REGISTRY = (os.environ.get("CT_PERSON_REGISTRY", "") or "confirmed").strip().lower()
+if PERSON_REGISTRY not in ("confirmed", "candidates"):
+    raise ValueError(f"CT_PERSON_REGISTRY must be 'confirmed' or 'candidates', not '{PERSON_REGISTRY}'")
+CANDIDATE_REGISTRY_FILE = os.path.join(DATA_ROOT, "data", "person_registry_with_candidates.csv")
+CANDIDATE_SUBDIR = "registry_candidates"
+
+MAIN_OUT_ROOT = os.path.join(CODE_ROOT, "outputs", REPORT_DATE)   # confirmed-registry results for this cut
+OUT_ROOT = os.environ.get("CT_REPORT_OUT", "") or (
+    os.path.join(MAIN_OUT_ROOT, CANDIDATE_SUBDIR) if PERSON_REGISTRY == "candidates" else MAIN_OUT_ROOT)
+if PERSON_REGISTRY == "candidates" and os.path.abspath(OUT_ROOT) == os.path.abspath(MAIN_OUT_ROOT):
+    raise ValueError("CT_PERSON_REGISTRY=candidates would overwrite the main outputs; pick another CT_REPORT_OUT.")
 D = os.path.join(OUT_ROOT, "derived")      # person/pair-level intermediate files
 T = os.path.join(OUT_ROOT, "tables")
 F = os.path.join(OUT_ROOT, "figures")                 # figures used in the manuscript (Fig 1-4, S1-S8)

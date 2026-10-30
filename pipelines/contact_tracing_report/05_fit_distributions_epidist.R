@@ -123,7 +123,16 @@ latest_cut <- function(root) {
 }
 REPORT_DATE <- Sys.getenv("CT_REPORT_DATE", unset = "")
 if (!nzchar(REPORT_DATE)) REPORT_DATE <- latest_cut(data_root)
-OUT_ROOT    <- Sys.getenv("CT_REPORT_OUT", unset = file.path(code_root, "outputs", REPORT_DATE))
+# CT_PERSON_REGISTRY=candidates -> registry sensitivity run, outputs in outputs/<DATE>/registry_candidates/
+# (same rule as ctr_paths.py)
+PERSON_REGISTRY <- tolower(Sys.getenv("CT_PERSON_REGISTRY", unset = "confirmed"))
+if (!nzchar(PERSON_REGISTRY)) PERSON_REGISTRY <- "confirmed"
+if (!PERSON_REGISTRY %in% c("confirmed", "candidates"))
+  stop("CT_PERSON_REGISTRY must be 'confirmed' or 'candidates'", call. = FALSE)
+MAIN_OUT_ROOT <- file.path(code_root, "outputs", REPORT_DATE)
+OUT_ROOT    <- Sys.getenv("CT_REPORT_OUT", unset = "")
+if (!nzchar(OUT_ROOT))
+  OUT_ROOT <- if (PERSON_REGISTRY == "candidates") file.path(MAIN_OUT_ROOT, "registry_candidates") else MAIN_OUT_ROOT
 message("Reading/writing under: ", OUT_ROOT)
 
 # ------------------------------- settings ------------------------------------

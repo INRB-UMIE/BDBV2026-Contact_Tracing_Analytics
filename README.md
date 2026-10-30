@@ -25,6 +25,7 @@ Paths are resolved in `pipelines/contact_tracing_report/ctr_paths.py` (Python) a
 | `CT_REPORT_DATE` | most recent `data/<DATE>/` | Which `data/<DATE>/` export to use; also the data cut used for the follow-up and truncation rules |
 | `CT_REPORT_OUT` | `<this repo>/outputs/<DATE>` | Override the output folder |
 | `REFIT` | `FALSE` | `TRUE` ignores cached distribution fits |
+| `CT_PERSON_REGISTRY` | `confirmed` | `candidates` runs the person-registry sensitivity analysis (see below); set by `./run_report.sh --candidates` |
 
 Outputs are written to `outputs/<DATE>/` in this repo (`derived/`, `tables/`, `figures/`, Word files). Aggregate outputs (`tables/`, `figures/`, Word files) are committed. **`derived/` is git-ignored**: it holds person-level (de-identified) outbreak data and fit caches, and must never be committed.
 
@@ -45,7 +46,8 @@ pipelines/contact_tracing_report/
 ├── 10_table2.py                     # manuscript Table 2: indicators by province (tables/table2_province.csv + table2.docx)
 ├── 11_offspring_distribution.py     # Fig S9: secondary cases per source (superspreading), negative binomial k, beta-binomial ICC
 ├── 12_si5_risk_factors.py          # SI-5 table: SAR, crude RR, adjusted OR by factor (bootstrap + Wilson/Wald CIs)
-└── 13_dashboard_tables.py         # aggregate tables for the dashboard's Surveillance and Testing tab (tables/dashboard_*)
+├── 13_dashboard_tables.py         # aggregate tables for the dashboard's Surveillance and Testing tab (tables/dashboard_*)
+└── 14_registry_sensitivity.py     # person-registry sensitivity: confirmed vs candidate person IDs (run by --candidates)
 ```
 
 Run everything from the repo root:
@@ -104,6 +106,24 @@ Or run steps one at a time, e.g. `python3 pipelines/contact_tracing_report/02_an
 | Distribution families (`05`) | gamma, lognormal, Weibull, negative binomial, normal (serial interval); gamma, lognormal, Weibull (incubation), compared on the main-analysis data only |
 
 Full decision log: `derived/decisions_log.csv` in the output folder.
+
+### Person-registry sensitivity
+
+Person IDs in the exports come from `person_registry.csv` (confirmed matches only). Links still waiting for review are therefore missing, and they can change the SAR (e.g. a contact who is also a linelist case under another ID). `person_registry_with_candidates.csv` gives an upper bound: its `candidate_person_id` groups IDs as if every match suggested by the algorithm (and not rejected) were accepted.
+
+```bash
+./run_report.sh                 # main run (confirmed IDs)         -> outputs/<DATE>/
+./run_report.sh --candidates    # IDs re-issued from candidates    -> outputs/<DATE>/registry_candidates/
+                                # then 14_registry_sensitivity.py  -> registry_candidates/tables/registry_sensitivity.csv
+                                #                                     registry_candidates/figures/additional/registry_sensitivity.png
+```
+
+- In candidate mode, `01_harmonise.py` replaces `person_id`, `source_case_person_id` and `contact_person_id` with the `candidate_person_id` of each original ID (`alert_id`, `source_case_alert_id`, `contact_id`). If an original ID is missing from the registry, it falls back to the exported `person_id`. If neither is found, the run stops. Every later step runs unchanged.
+- The registry files are only **read**, never written. The main run does not open either file.
+- The run stops if the candidate grouping would split a confirmed person (it must only merge).
+- Counts of re-issued IDs and the extra self-pairs (dropped) are in `registry_candidates/derived/decisions_log.csv`. The original IDs are kept in `*_person_id_confirmed` columns in the derived files.
+- The registry is a single current file, not one per cut. For an older cut it also includes matches confirmed after that export; these rows are counted in the decision log ("exported person_id differs from the registry's current person_id").
+- Add `--fit` to compare the fitted serial-interval and incubation distributions as well.
 
 ## Dates and new data cuts
 
