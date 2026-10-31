@@ -1,0 +1,129 @@
+delay,level,group,n,mean,median,q1,q3
+Onset → notification,National,All,8387,5.2,4.0,2.0,7.0
+Onset → notification,Province,Bas-Uele,10,5.8,4.5,3.25,8.25
+Onset → notification,Province,Haut-Uele,405,5.2,4.0,2.0,7.0
+Onset → notification,Province,Ituri,5936,5.3,4.0,2.0,7.0
+Onset → notification,Province,Nord-Kivu,1950,4.8,4.0,2.0,6.75
+Onset → notification,Province,Nord-Ubangi,2,8.0,8.0,8.0,8.0
+Onset → notification,Province,Sud-Kivu,3,10.3,1.0,1.0,15.0
+Onset → notification,Province,Sud-Ubangi,0,,,,
+Onset → notification,Province,Tshopo,81,5.5,4.0,2.0,7.0
+Onset → notification,Month,2026-04,3,31.7,29.0,27.5,34.5
+Onset → notification,Month,2026-05,502,5.3,3.0,1.0,7.0
+Onset → notification,Month,2026-06,1185,5.4,4.0,2.0,7.0
+Onset → notification,Month,2026-07,1691,5.8,5.0,2.0,7.0
+Onset → notification,Month,2026-08,1977,5.4,4.0,2.0,7.0
+Onset → notification,Month,2026-09,1811,4.9,4.0,2.0,7.0
+Onset → notification,Month,2026-10,1218,4.2,3.0,2.0,6.0
+Notification → sample,National,All,9498,3.5,1.0,0.0,4.0
+Notification → sample,Province,Bas-Uele,12,1.1,0.0,0.0,0.25
+Notification → sample,Province,Haut-Uele,422,4.8,1.0,0.0,9.0
+Notification → sample,Province,Ituri,6791,4.4,1.0,0.0,6.0
+Notification → sample,Province,Nord-Kivu,2184,0.7,0.0,0.0,0.0
+Notification → sample,Province,Nord-Ubangi,2,1.0,1.0,0.5,1.5
+Notification → sample,Province,Sud-Kivu,2,2.5,2.5,1.25,3.75
+Notification → sample,Province,Sud-Ubangi,1,0.0,0.0,0.0,0.0
+Notification → sample,Province,Tshopo,84,1.7,0.0,0.0,2.0
+Notification → sample,Month,2026-04,4,0.5,0.0,0.0,0.5
+Notification → sample,Month,2026-05,446,4.9,0.0,0.0,3.0
+Notification → sample,Month,2026-06,1374,4.4,1.0,0.0,6.0
+Notification → sample,Month,2026-07,1959,4.2,1.0,0.0,5.0
+Notification → sample,Month,2026-08,2242,3.8,1.0,0.0,5.0
+Notification → sample,Month,2026-09,2020,2.9,0.0,0.0,3.0
+Notification → sample,Month,2026-10,1453,1.7,0.0,0.0,2.0
+Sample → lab result,National,All,9961,0.9,0.0,0.0,1.0
+Sample → lab result,Province,Bas-Uele,12,1.8,1.0,0.75,2.0
+Sample → lab result,Province,Haut-Uele,432,1.7,1.0,0.0,2.0
+Sample → lab result,Province,Ituri,7086,0.7,0.0,0.0,1.0
+Sample → lab result,Province,Nord-Kivu,2331,1.2,1.0,0.0,1.0
+Sample → lab result,Province,Nord-Ubangi,2,2.5,2.5,1.25,3.75
+Sample → lab result,Province,Sud-Kivu,3,3.0,1.0,1.0,4.0
+Sample → lab result,Province,Sud-Ubangi,2,15.5,15.5,7.75,23.25
+Sample → lab result,Province,Tshopo,93,1.0,0.0,0.0,0.0
+Sample → lab result,Month,2026-04,5,1.0,1.0,0.0,1.0
+Sample → lab result,Month,2026-05,509,2.7,1.0,0.0,4.0
+Sample → lab result,Month,2026-06,1448,1.1,0.0,0.0,1.0
+Sample → lab result,Month,2026-07,2039,0.7,0.0,0.0,1.0
+Sample → lab result,Month,2026-08,2345,0.7,0.0,0.0,1.0
+Sample → lab result,Month,2026-09,2098,0.8,0.0,0.0,1.0
+Sample → lab result,Month,2026-10,1516,0.7,0.0,0.0,1.0
+Onset → sample,National,All,8362,8.5,6.0,3.0,12.0
+Onset → sample,Province,Bas-Uele,10,6.3,5.5,3.25,9.75
+Onset → sample,Province,Haut-Uele,406,9.8,8.0,3.0,14.0
+Onset → sample,Province,Ituri,5914,9.5,7.0,3.0,14.0
+Onset → sample,Province,Nord-Kivu,1940,5.3,4.0,2.0,7.0
+Onset → sample,Province,Nord-Ubangi,2,9.0,9.0,8.5,9.5
+Onset → sample,Province,Sud-Kivu,3,11.7,6.0,3.0,17.5
+Onset → sample,Province,Sud-Ubangi,0,,,,
+Onset → sample,Province,Tshopo,87,6.4,6.0,2.5,8.0
+Onset → sample,Month,2026-04,3,31.7,29.0,27.5,34.5
+Onset → sample,Month,2026-05,473,9.0,5.0,1.0,13.0
+Onset → sample,Month,2026-06,1181,9.6,7.0,3.0,14.0
+Onset → sample,Month,2026-07,1691,9.7,7.0,3.0,14.0
+Onset → sample,Month,2026-08,1978,9.0,7.0,3.0,13.0
+Onset → sample,Month,2026-09,1811,7.6,6.0,3.0,11.0
+Onset → sample,Month,2026-10,1225,5.8,5.0,2.0,8.0
+Onset → lab result,National,All,8383,9.2,7.0,4.0,13.0
+Onset → lab result,Province,Bas-Uele,11,8.6,8.0,7.0,11.0
+Onset → lab result,Province,Haut-Uele,393,10.8,9.0,5.0,15.0
+Onset → lab result,Province,Ituri,5939,10.1,8.0,4.0,14.0
+Onset → lab result,Province,Nord-Kivu,1947,6.2,5.0,3.0,8.0
+Onset → lab result,Province,Nord-Ubangi,2,11.5,11.5,10.75,12.25
+Onset → lab result,Province,Sud-Kivu,3,14.7,7.0,7.0,18.5
+Onset → lab result,Province,Sud-Ubangi,0,,,,
+Onset → lab result,Province,Tshopo,88,7.3,6.0,3.0,9.0
+Onset → lab result,Month,2026-04,3,33.3,30.0,28.5,36.5
+Onset → lab result,Month,2026-05,487,11.0,8.0,4.0,14.5
+Onset → lab result,Month,2026-06,1181,10.5,8.0,4.0,15.0
+Onset → lab result,Month,2026-07,1693,10.3,8.0,4.0,15.0
+Onset → lab result,Month,2026-08,1985,9.6,8.0,4.0,13.0
+Onset → lab result,Month,2026-09,1807,8.2,7.0,4.0,11.0
+Onset → lab result,Month,2026-10,1227,6.4,5.0,3.0,9.0
+Notification → first contacts listed,National,All,1189,7.1,4.0,1.0,10.0
+Notification → first contacts listed,Province,Bas-Uele,5,4.2,5.0,1.0,6.0
+Notification → first contacts listed,Province,Haut-Uele,173,7.8,4.0,1.0,11.0
+Notification → first contacts listed,Province,Ituri,868,7.8,5.0,1.0,11.0
+Notification → first contacts listed,Province,Nord-Kivu,81,4.0,3.0,2.0,4.0
+Notification → first contacts listed,Province,Nord-Ubangi,0,,,,
+Notification → first contacts listed,Province,Sud-Kivu,1,-17.0,-17.0,-17.0,-17.0
+Notification → first contacts listed,Province,Sud-Ubangi,0,,,,
+Notification → first contacts listed,Province,Tshopo,61,0.7,1.0,0.0,3.0
+Notification → first contacts listed,Month,2026-04,2,8.5,8.5,-4.25,21.25
+Notification → first contacts listed,Month,2026-05,82,14.9,15.5,2.0,23.0
+Notification → first contacts listed,Month,2026-06,163,9.5,6.0,2.0,13.0
+Notification → first contacts listed,Month,2026-07,210,8.7,5.0,2.0,12.75
+Notification → first contacts listed,Month,2026-08,297,6.4,3.0,1.0,9.0
+Notification → first contacts listed,Month,2026-09,321,4.7,2.0,1.0,6.0
+Notification → first contacts listed,Month,2026-10,114,4.0,4.0,1.0,6.0
+Onset → first contacts listed,National,All,1050,11.9,9.0,5.0,16.0
+Onset → first contacts listed,Province,Bas-Uele,3,11.7,14.0,9.0,15.5
+Onset → first contacts listed,Province,Haut-Uele,157,12.4,9.0,5.0,16.0
+Onset → first contacts listed,Province,Ituri,750,12.5,10.0,6.0,17.0
+Onset → first contacts listed,Province,Nord-Kivu,79,8.9,8.0,6.0,10.0
+Onset → first contacts listed,Province,Nord-Ubangi,0,,,,
+Onset → first contacts listed,Province,Sud-Kivu,1,12.0,12.0,12.0,12.0
+Onset → first contacts listed,Province,Sud-Ubangi,0,,,,
+Onset → first contacts listed,Province,Tshopo,60,6.6,6.0,3.0,11.25
+Onset → first contacts listed,Month,2026-04,2,36.0,36.0,24.0,48.0
+Onset → first contacts listed,Month,2026-05,80,19.3,19.0,8.75,27.25
+Onset → first contacts listed,Month,2026-06,144,13.7,11.0,6.75,18.25
+Onset → first contacts listed,Month,2026-07,184,14.5,14.0,7.0,19.0
+Onset → first contacts listed,Month,2026-08,257,11.3,9.0,5.0,15.0
+Onset → first contacts listed,Month,2026-09,284,9.4,7.0,5.0,12.0
+Onset → first contacts listed,Month,2026-10,99,6.9,7.0,4.0,10.0
+Onset → hospital admission,National,All,2485,6.1,5.0,3.0,7.0
+Onset → hospital admission,Province,Bas-Uele,0,,,,
+Onset → hospital admission,Province,Haut-Uele,127,7.9,4.0,2.0,9.0
+Onset → hospital admission,Province,Ituri,2311,6.0,5.0,3.0,7.0
+Onset → hospital admission,Province,Nord-Kivu,35,6.6,5.0,3.0,8.0
+Onset → hospital admission,Province,Nord-Ubangi,0,,,,
+Onset → hospital admission,Province,Sud-Kivu,2,8.5,8.5,5.75,11.25
+Onset → hospital admission,Province,Sud-Ubangi,0,,,,
+Onset → hospital admission,Province,Tshopo,10,4.8,0.5,0.0,4.25
+Onset → hospital admission,Month,2026-04,2,20.0,20.0,17.0,23.0
+Onset → hospital admission,Month,2026-05,133,7.5,5.0,2.0,10.0
+Onset → hospital admission,Month,2026-06,461,6.4,5.0,3.0,7.0
+Onset → hospital admission,Month,2026-07,615,6.4,5.0,3.0,8.0
+Onset → hospital admission,Month,2026-08,646,6.0,4.0,2.0,7.0
+Onset → hospital admission,Month,2026-09,453,5.7,4.0,2.0,7.0
+Onset → hospital admission,Month,2026-10,175,4.7,4.0,2.0,7.0

@@ -1,0 +1,43 @@
+definition,attack_rate_bin_centre_pct,bin,source_cases,source_cases_lt5_contacts
+Main (incl. 'case validated'),0,0–2.5%,1017,299
+Main (incl. 'case validated'),5,2.5–7.5%,41,0
+Main (incl. 'case validated'),10,7.5–12.5%,21,0
+Main (incl. 'case validated'),15,12.5–17.5%,13,0
+Main (incl. 'case validated'),20,17.5–22.5%,6,0
+Main (incl. 'case validated'),25,22.5–27.5%,7,6
+Main (incl. 'case validated'),30,27.5–32.5%,3,0
+Main (incl. 'case validated'),35,32.5–37.5%,5,3
+Main (incl. 'case validated'),40,37.5–42.5%,1,0
+Main (incl. 'case validated'),45,42.5–47.5%,0,0
+Main (incl. 'case validated'),50,47.5–52.5%,6,6
+Main (incl. 'case validated'),55,52.5–57.5%,0,0
+Main (incl. 'case validated'),60,57.5–62.5%,0,0
+Main (incl. 'case validated'),65,62.5–67.5%,0,0
+Main (incl. 'case validated'),70,67.5–72.5%,0,0
+Main (incl. 'case validated'),75,72.5–77.5%,0,0
+Main (incl. 'case validated'),80,77.5–82.5%,0,0
+Main (incl. 'case validated'),85,82.5–87.5%,0,0
+Main (incl. 'case validated'),90,87.5–92.5%,0,0
+Main (incl. 'case validated'),95,92.5–97.5%,1,0
+Main (incl. 'case validated'),100,97.5–100%,12,11
+Excl. 'case validated',0,0–2.5%,1025,300
+Excl. 'case validated',5,2.5–7.5%,40,0
+Excl. 'case validated',10,7.5–12.5%,21,0
+Excl. 'case validated',15,12.5–17.5%,12,0
+Excl. 'case validated',20,17.5–22.5%,5,0
+Excl. 'case validated',25,22.5–27.5%,6,6
+Excl. 'case validated',30,27.5–32.5%,2,0
+Excl. 'case validated',35,32.5–37.5%,5,3
+Excl. 'case validated',40,37.5–42.5%,1,0
+Excl. 'case validated',45,42.5–47.5%,0,0
+Excl. 'case validated',50,47.5–52.5%,6,6
+Excl. 'case validated',55,52.5–57.5%,0,0
+Excl. 'case validated',60,57.5–62.5%,0,0
+Excl. 'case validated',65,62.5–67.5%,0,0
+Excl. 'case validated',70,67.5–72.5%,0,0
+Excl. 'case validated',75,72.5–77.5%,0,0
+Excl. 'case validated',80,77.5–82.5%,0,0
+Excl. 'case validated',85,82.5–87.5%,0,0
+Excl. 'case validated',90,87.5–92.5%,0,0
+Excl. 'case validated',95,92.5–97.5%,0,0
+Excl. 'case validated',100,97.5–100%,10,10
