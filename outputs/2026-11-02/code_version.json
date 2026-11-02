@@ -1,0 +1,14 @@
+{
+  "code_repo": "INRB-UMIE/BDBV2026-Contact_Tracing_Analytics",
+  "commit": "f823093d16b5b36561d19ca9a159f7f61b766402",
+  "requested_ref": "f823093d16b5b36561d19ca9a159f7f61b766402",
+  "data_cut": "2026-11-02",
+  "data_repo_commit": "3fd7039a62fc2f9a215eeef940d4a6b174f4956f",
+  "public_data_commit": "d9400381793b6ff5758fdde890efbd7963aa15a4",
+  "inputs": {
+    "linelist_sha256": "1258ab8add5ff0f11c258aa980f4b1086b1e662960ee4913118f9194e59a6b47",
+    "contact_tracing_sha256": "429d2907aa7243222115cfefb4b37cc5d9fbf4d913cf07460edf461690370586"
+  },
+  "recorded_at": "2026-11-02T08:22:32Z",
+  "workflow_run": "https://github.com/INRB-UMIE/BDBV2026-Processed_Sensitive_Data/actions/runs/41398278141"
+}
