@@ -1,0 +1,9 @@
+delay,n_both_dates,n_excluded,n_negative,n_gt60
+Onset → notification,8666,128,123,5
+Notification → sample,10214,538,509,29
+Sample → lab result,10153,7,0,7
+Onset → sample,8652,141,103,38
+Onset → lab result,8609,78,34,44
+Notification → first contacts listed,1271,27,82,26
+Onset → first contacts listed,1128,25,25,25
+Onset → hospital admission,2626,89,84,5
