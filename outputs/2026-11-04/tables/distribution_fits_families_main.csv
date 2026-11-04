@@ -1,0 +1,9 @@
+Quantity,Family,n,Mean (95% CrI),Median (95% CrI),95th percentile (95% CrI),dELPD (SE),converged
+Incubation period,gamma (primary),74,9.8 (8.2-12.0),7.9 (6.2-9.7),24.8 (20.2-31.7),0.0 (0.0),TRUE
+Incubation period,weibull,74,9.8 (8.1-11.9),8.0 (6.2-9.9),24.6 (20.4-31.9),-0.1 (0.5),TRUE
+Incubation period,lognormal,74,10.0 (8.2-12.7),7.4 (6.0-9.0),26.5 (20.3-37.5),-1.4 (1.7),TRUE
+Serial interval,negbinomial,87,12.8 (10.6-15.5),11.0 (9.0-13.0),34.0 (29.0-42.0),0.0 (0.0),TRUE
+Serial interval,gamma (primary),87,12.9 (10.5-15.7),10.4 (8.2-12.8),36.2 (30.3-44.3),-0.4 (7.2),TRUE
+Serial interval,weibull,87,12.4 (10.8-15.3),11.0 (8.7-13.3),33.6 (29.6-41.0),-1.9 (7.1),FALSE
+Serial interval,lognormal,87,14.0 (10.9-18.5),9.3 (7.1-12.0),44.8 (34.3-62.5),-5.6 (8.6),TRUE
+Serial interval,normal,87,13.3 (10.8-15.8),13.3 (10.8-15.8),32.6 (29.2-36.8),-11.4 (4.2),TRUE
