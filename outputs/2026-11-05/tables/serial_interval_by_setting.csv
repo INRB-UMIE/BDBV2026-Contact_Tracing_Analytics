@@ -1,0 +1,5 @@
+setting,n_pairs,median,median_lo,median_hi,mean
+household,59,9.0,8.0,12.0,12.423728813559322
+hospital,22,12.0,9.0,15.0,15.136363636363637
+hospital - household,81,3.0,-2.0,6.5,2.712634822804315
+other/unknown (not shown),7,,,,
