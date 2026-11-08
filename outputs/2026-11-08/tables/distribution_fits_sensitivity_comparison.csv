@@ -1,0 +1,91 @@
+quantity,role,analysis,family,n,stat,est,lo,hi,elpd_diff,se_diff
+Serial interval,Main,si_main,negbinomial,87,Mean,13.32,10.96,16.02,0,0
+Serial interval,Main,si_main,negbinomial,87,Median,11,9,14,0,0
+Serial interval,Main,si_main,negbinomial,87,95th percentile,36,30,43,0,0
+Serial interval,Main,si_main,gamma,87,Mean,13.42,10.93,16.64,-0.54,7.72
+Serial interval,Main,si_main,gamma,87,Median,10.78,8.47,13.49,-0.54,7.72
+Serial interval,Main,si_main,gamma,87,95th percentile,37.56,31.19,46.57,-0.54,7.72
+Serial interval,Main,si_main,lognormal,87,Mean,14.67,11.42,19.34,-6.18,8.95
+Serial interval,Main,si_main,lognormal,87,Median,9.74,7.48,12.51,-6.18,8.95
+Serial interval,Main,si_main,lognormal,87,95th percentile,46.96,35.74,64.95,-6.18,8.95
+Serial interval,Main,si_main,normal,87,Mean,13.81,11.23,16.25,-10.61,3.94
+Serial interval,Main,si_main,normal,87,Median,13.81,11.23,16.25,-10.61,3.94
+Serial interval,Main,si_main,normal,87,95th percentile,33.5,29.95,37.8,-10.61,3.94
+Serial interval,"S1: no cut-off, no negatives",si_s1,negbinomial,86,Mean,15.13,13.1,17.55,0,0
+Serial interval,"S1: no cut-off, no negatives",si_s1,negbinomial,86,Median,13,11,15,0,0
+Serial interval,"S1: no cut-off, no negatives",si_s1,negbinomial,86,95th percentile,35,30,41,0,0
+Serial interval,"S1: no cut-off, no negatives",si_s1,gamma,86,Mean,15.29,13.11,18.09,-0.6,7.67
+Serial interval,"S1: no cut-off, no negatives",si_s1,gamma,86,Median,12.86,10.81,15.13,-0.6,7.67
+Serial interval,"S1: no cut-off, no negatives",si_s1,gamma,86,95th percentile,36.12,30.77,44.46,-0.6,7.67
+Serial interval,"S1: no cut-off, no negatives",si_s1,weibull,86,Mean,15.32,13.24,17.91,-1.36,7.33
+Serial interval,"S1: no cut-off, no negatives",si_s1,weibull,86,Median,13.17,11.05,15.5,-1.36,7.33
+Serial interval,"S1: no cut-off, no negatives",si_s1,weibull,86,95th percentile,35.7,30.69,43.21,-1.36,7.33
+Serial interval,"S1: no cut-off, no negatives",si_s1,lognormal,86,Mean,16.37,13.54,21.2,-5.04,9.31
+Serial interval,"S1: no cut-off, no negatives",si_s1,lognormal,86,Median,11.98,10.12,14.43,-5.04,9.31
+Serial interval,"S1: no cut-off, no negatives",si_s1,lognormal,86,95th percentile,43.93,33.98,63.69,-5.04,9.31
+Serial interval,"S2: no cut-off, negatives",si_s2,negbinomial,98,Mean,13.05,10.87,15.7,0,0
+Serial interval,"S2: no cut-off, negatives",si_s2,negbinomial,98,Median,11,9,13,0,0
+Serial interval,"S2: no cut-off, negatives",si_s2,negbinomial,98,95th percentile,35.5,30,43,0,0
+Serial interval,"S2: no cut-off, negatives",si_s2,gamma,98,Mean,13.24,10.88,16.24,-0.41,7.63
+Serial interval,"S2: no cut-off, negatives",si_s2,gamma,98,Median,10.57,8.37,13.09,-0.41,7.63
+Serial interval,"S2: no cut-off, negatives",si_s2,gamma,98,95th percentile,37.5,31.38,46.32,-0.41,7.63
+Serial interval,"S2: no cut-off, negatives",si_s2,lognormal,98,Mean,14.91,11.5,19.78,-6.85,8.67
+Serial interval,"S2: no cut-off, negatives",si_s2,lognormal,98,Median,9.62,7.31,12.38,-6.85,8.67
+Serial interval,"S2: no cut-off, negatives",si_s2,lognormal,98,95th percentile,48.55,37.17,67.23,-6.85,8.67
+Serial interval,"S2: no cut-off, negatives",si_s2,normal,98,Mean,13.48,11.12,15.84,-11.21,4.43
+Serial interval,"S2: no cut-off, negatives",si_s2,normal,98,Median,13.48,11.12,15.84,-11.21,4.43
+Serial interval,"S2: no cut-off, negatives",si_s2,normal,98,95th percentile,32.81,29.54,36.79,-11.21,4.43
+Serial interval,"S3: cut-off, no negatives",si_s3,gamma,77,Mean,15.42,13.3,18.18,0,0
+Serial interval,"S3: cut-off, no negatives",si_s3,gamma,77,Median,13.06,11.13,15.4,0,0
+Serial interval,"S3: cut-off, no negatives",si_s3,gamma,77,95th percentile,35.8,30.28,44.42,0,0
+Serial interval,"S3: cut-off, no negatives",si_s3,negbinomial,77,Mean,15.34,13.22,17.75,-0.55,7.63
+Serial interval,"S3: cut-off, no negatives",si_s3,negbinomial,77,Median,13,11,15,-0.55,7.63
+Serial interval,"S3: cut-off, no negatives",si_s3,negbinomial,77,95th percentile,34,30,42,-0.55,7.63
+Serial interval,"S3: cut-off, no negatives",si_s3,lognormal,77,Mean,15.77,13.2,19.38,-0.78,2.52
+Serial interval,"S3: cut-off, no negatives",si_s3,lognormal,77,Median,12.1,10.08,14.25,-0.78,2.52
+Serial interval,"S3: cut-off, no negatives",si_s3,lognormal,77,95th percentile,40.1,31.94,53.62,-0.78,2.52
+Serial interval,"S3: cut-off, no negatives",si_s3,weibull,77,Mean,15.54,13.31,18.29,-1.72,1.19
+Serial interval,"S3: cut-off, no negatives",si_s3,weibull,77,Median,13.38,11.07,15.98,-1.72,1.19
+Serial interval,"S3: cut-off, no negatives",si_s3,weibull,77,95th percentile,36.02,30.89,44.28,-1.72,1.19
+Incubation period,Main,inc_main,gamma,74,Mean,10.55,8.72,12.84,0,0
+Incubation period,Main,inc_main,gamma,74,Median,8.5,6.7,10.43,0,0
+Incubation period,Main,inc_main,gamma,74,95th percentile,26.52,21.65,34.13,0,0
+Incubation period,Main,inc_main,weibull,74,Mean,10.58,8.76,12.75,-0.19,0.57
+Incubation period,Main,inc_main,weibull,74,Median,8.63,6.71,10.66,-0.19,0.57
+Incubation period,Main,inc_main,weibull,74,95th percentile,26.52,21.89,33.9,-0.19,0.57
+Incubation period,Main,inc_main,lognormal,74,Mean,10.75,8.82,13.72,-1.41,1.85
+Incubation period,Main,inc_main,lognormal,74,Median,7.9,6.38,9.57,-1.41,1.85
+Incubation period,Main,inc_main,lognormal,74,95th percentile,28.56,21.95,40.02,-1.41,1.85
+Incubation period,"S1: last exposure, cut-off",inc_s1,gamma,56,Mean,10.02,8.15,12.48,0,0
+Incubation period,"S1: last exposure, cut-off",inc_s1,gamma,56,Median,7.97,6.27,9.98,0,0
+Incubation period,"S1: last exposure, cut-off",inc_s1,gamma,56,95th percentile,25.72,20.72,33.82,0,0
+Incubation period,"S1: last exposure, cut-off",inc_s1,weibull,56,Mean,10.13,8.3,12.61,-0.42,0.46
+Incubation period,"S1: last exposure, cut-off",inc_s1,weibull,56,Median,8.19,6.36,10.35,-0.42,0.46
+Incubation period,"S1: last exposure, cut-off",inc_s1,weibull,56,95th percentile,25.8,21.02,33.89,-0.42,0.46
+Incubation period,"S1: last exposure, cut-off",inc_s1,lognormal,56,Mean,10.36,8.12,14.13,-0.76,1.52
+Incubation period,"S1: last exposure, cut-off",inc_s1,lognormal,56,Median,7.17,5.75,9.09,-0.76,1.52
+Incubation period,"S1: last exposure, cut-off",inc_s1,lognormal,56,95th percentile,29.39,21.36,44.31,-0.76,1.52
+Incubation period,"S1: last exposure, cut-off",inc_s1,negbinomial,56,Mean,10.01,8.26,12.39,-1.21,8.77
+Incubation period,"S1: last exposure, cut-off",inc_s1,negbinomial,56,Median,8,7,10,-1.21,8.77
+Incubation period,"S1: last exposure, cut-off",inc_s1,negbinomial,56,95th percentile,25,20,32,-1.21,8.77
+Incubation period,"S2: uniform window, no cut-off",inc_s2,gamma,82,Mean,10.76,9.12,12.84,0,0
+Incubation period,"S2: uniform window, no cut-off",inc_s2,gamma,82,Median,8.81,7.14,10.61,0,0
+Incubation period,"S2: uniform window, no cut-off",inc_s2,gamma,82,95th percentile,26.57,21.99,33.76,0,0
+Incubation period,"S2: uniform window, no cut-off",inc_s2,weibull,82,Mean,10.81,9.08,12.99,-0.16,0.68
+Incubation period,"S2: uniform window, no cut-off",inc_s2,weibull,82,Median,8.99,7.19,10.86,-0.16,0.68
+Incubation period,"S2: uniform window, no cut-off",inc_s2,weibull,82,95th percentile,26.38,22.09,33.83,-0.16,0.68
+Incubation period,"S2: uniform window, no cut-off",inc_s2,lognormal,82,Mean,11.05,9.07,13.96,-1.87,1.89
+Incubation period,"S2: uniform window, no cut-off",inc_s2,lognormal,82,Median,8.24,6.76,9.93,-1.87,1.89
+Incubation period,"S2: uniform window, no cut-off",inc_s2,lognormal,82,95th percentile,28.95,22.34,41.04,-1.87,1.89
+Incubation period,"S3: last exposure, no cut-off",inc_s3,gamma,67,Mean,10.03,8.31,12.31,0,0
+Incubation period,"S3: last exposure, no cut-off",inc_s3,gamma,67,Median,8.12,6.6,9.98,0,0
+Incubation period,"S3: last exposure, no cut-off",inc_s3,gamma,67,95th percentile,25.25,20.56,32.22,0,0
+Incubation period,"S3: last exposure, no cut-off",inc_s3,lognormal,67,Mean,10.37,8.3,13.7,-0.59,1.72
+Incubation period,"S3: last exposure, no cut-off",inc_s3,lognormal,67,Median,7.35,6,9.14,-0.59,1.72
+Incubation period,"S3: last exposure, no cut-off",inc_s3,lognormal,67,95th percentile,28.62,21.66,41.65,-0.59,1.72
+Incubation period,"S3: last exposure, no cut-off",inc_s3,weibull,67,Mean,10.09,8.4,12.32,-0.64,0.58
+Incubation period,"S3: last exposure, no cut-off",inc_s3,weibull,67,Median,8.28,6.63,10.22,-0.64,0.58
+Incubation period,"S3: last exposure, no cut-off",inc_s3,weibull,67,95th percentile,25.18,20.78,32.51,-0.64,0.58
+Incubation period,"S3: last exposure, no cut-off",inc_s3,negbinomial,67,Mean,10,8.33,12.01,-1.21,9.41
+Incubation period,"S3: last exposure, no cut-off",inc_s3,negbinomial,67,Median,8,7,10,-1.21,9.41
+Incubation period,"S3: last exposure, no cut-off",inc_s3,negbinomial,67,95th percentile,24,20,30,-1.21,9.41

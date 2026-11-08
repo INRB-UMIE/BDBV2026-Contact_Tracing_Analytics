@@ -1,0 +1,3 @@
+Quantity,Definition,n,Mean (95% CrI),Median (95% CrI),SD (95% CrI),95th percentile (95% CrI),"Gamma parameters (median, 95% CrI)",converged
+Serial interval,SI -5 to 60 d; infector onset <= 27 Sep,87,13.4 (10.9-16.6),10.8 (8.5-13.5),12.5 (10.3-15.7),37.6 (31.2-46.6),shape 2.397 (1.771-3.174); rate 0.124 (0.088-0.169)  [fitted to delay + 6],TRUE
+Incubation period,"infection uniform in [source onset, min(last exposure, onset)] (= last exposure if before source onset); infector onset <= 27 Sep",74,10.5 (8.7-12.8),8.5 (6.7-10.4),8.2 (6.4-11.0),26.5 (21.7-34.1),shape 1.648 (1.090-2.407); rate 0.157 (0.100-0.234),TRUE
