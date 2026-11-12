@@ -1,0 +1,37 @@
+definition,secondary_cases,source_cases,pct_source_cases
+Main (incl. 'case validated'),0,1048,86.89883913764511
+Main (incl. 'case validated'),1,118,9.78441127694859
+Main (incl. 'case validated'),2,24,1.9900497512437811
+Main (incl. 'case validated'),3,4,0.33167495854063017
+Main (incl. 'case validated'),4,4,0.33167495854063017
+Main (incl. 'case validated'),5,3,0.24875621890547264
+Main (incl. 'case validated'),6,0,0.0
+Main (incl. 'case validated'),7,0,0.0
+Main (incl. 'case validated'),8,2,0.16583747927031509
+Main (incl. 'case validated'),9,0,0.0
+Main (incl. 'case validated'),10,0,0.0
+Main (incl. 'case validated'),11,0,0.0
+Main (incl. 'case validated'),12,1,0.08291873963515754
+Main (incl. 'case validated'),13,0,0.0
+Main (incl. 'case validated'),14,0,0.0
+Main (incl. 'case validated'),15,0,0.0
+Main (incl. 'case validated'),16,1,0.08291873963515754
+Main (incl. 'case validated'),17,1,0.08291873963515754
+Excl. 'case validated',0,1055,87.47927031509121
+Excl. 'case validated',1,118,9.78441127694859
+Excl. 'case validated',2,23,1.9071310116086235
+Excl. 'case validated',3,4,0.33167495854063017
+Excl. 'case validated',4,2,0.16583747927031509
+Excl. 'case validated',5,3,0.24875621890547264
+Excl. 'case validated',6,0,0.0
+Excl. 'case validated',7,0,0.0
+Excl. 'case validated',8,1,0.08291873963515754
+Excl. 'case validated',9,0,0.0
+Excl. 'case validated',10,0,0.0
+Excl. 'case validated',11,0,0.0
+Excl. 'case validated',12,0,0.0
+Excl. 'case validated',13,0,0.0
+Excl. 'case validated',14,0,0.0
+Excl. 'case validated',15,0,0.0
+Excl. 'case validated',16,0,0.0
+Excl. 'case validated',17,0,0.0
