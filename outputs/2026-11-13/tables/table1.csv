@@ -1,0 +1,22 @@
+Section,Measure,Estimate,n,Notes
+Contact tracing coverage,Cases with >=1 contact listed,11.6% (11.0-12.2),"1,266/10,923 cases",Confirmed/probable cases appearing as a source case in the CT data
+Contact tracing coverage,Cases already a listed contact before notification,0.7% (0.6-0.9),"77/10,923 cases",
+Follow-up coverage,Contacts fully followed up (to day 21 of follow-up),22.9% (20.2-25.9),"5,483/23,925 contacts",Closed windows: first follow-up on/before data cut - 21 d. CI: bootstrap by source case (Wilson 22.4-23.5)
+Secondary attack rate,Overall SAR,1.4% (1.1-1.7),"270/19,726 contacts",Linelist confirmed/probable or CT 'case confirmed'/'case validated'. CI: bootstrap by source case (Wilson 1.2-1.5)
+Risk ratio by relationship (vs unknown),Unknown,1 (reference),"SAR 1.5% (94/6,080)",
+Risk ratio by relationship (vs unknown),Spouse,2.94 (1.17-5.81),SAR 4.5% (10/220); Wald CI 1.55-5.56,
+Risk ratio by relationship (vs unknown),Parent,1.74 (1.02-3.02),"SAR 2.7% (32/1,188); Wald CI 1.17-2.59",
+Risk ratio by relationship (vs unknown),Child,0.67 (0.29-1.34),"SAR 1.0% (23/2,237); Wald CI 0.42-1.05",
+Risk ratio by relationship (vs unknown),Sibling,0.78 (0.47-1.30),"SAR 1.2% (56/4,672); Wald CI 0.56-1.08",
+Risk ratio by relationship (vs unknown),Neighbour,0.67 (0.37-1.21),"SAR 1.0% (55/5,329); Wald CI 0.48-0.93",
+"Incubation period (gamma fit, days)",Mean (95% CrI),11.1 (9.3-13.3),83 pairs,
+"Incubation period (gamma fit, days)",Median (95% CrI),8.9 (7.2-10.7),,
+"Incubation period (gamma fit, days)",SD (95% CrI),8.6 (6.8-11.3),,
+"Incubation period (gamma fit, days)",95th percentile (95% CrI),27.8 (22.8-35.2),,
+"Incubation period (gamma fit, days)",Parameters,shape 1.655 (1.128-2.391); rate 0.151 (0.097-0.223),,
+"Serial interval (gamma fit, days)",Mean (95% CrI),13.7 (11.4-16.5),97 pairs,
+"Serial interval (gamma fit, days)",Median (95% CrI),11.1 (9.0-13.5),,
+"Serial interval (gamma fit, days)",SD (95% CrI),12.4 (10.4-15.4),,
+"Serial interval (gamma fit, days)",95th percentile (95% CrI),37.4 (31.6-45.9),,
+"Serial interval (gamma fit, days)",Parameters,shape 2.503 (1.873-3.274); rate 0.128 (0.091-0.170) [fitted to delay + 6],,
+Time from source-case notification to first contact follow-up,Mean (days),3.4,"1,222 source cases",Median 2 (IQR 0-6); 225 negative (follow-up dated before notification); 36 outside +/-60 d excluded
