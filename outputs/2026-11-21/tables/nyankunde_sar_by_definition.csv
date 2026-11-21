@@ -1,0 +1,16 @@
+group,label,n_pairs,n_sources,k,sar,wilson_lo,wilson_hi,boot_lo,boot_hi
+"Nyankunde, May-Jun",Main (incl. 'case validated'),615,32,63,10.244,8.089,12.892,3.333,18.513
+"Nyankunde, May-Jun",Excl. 'case validated',615,32,5,0.813,0.348,1.889,0.259,1.378
+"Nyankunde, May-Jun",Linelist cases only,615,32,3,0.488,0.166,1.424,0.0,1.064
+"Nyankunde, Jul-Oct",Main (incl. 'case validated'),681,37,4,0.587,0.229,1.5,0.153,1.155
+"Nyankunde, Jul-Oct",Excl. 'case validated',681,37,4,0.587,0.229,1.5,0.161,1.124
+"Nyankunde, Jul-Oct",Linelist cases only,681,37,3,0.441,0.15,1.287,0.0,0.987
+"Nyankunde cluster (hospital, May-Jun)",Main (incl. 'case validated'),386,24,61,15.803,12.503,19.777,5.586,28.923
+"Nyankunde cluster (hospital, May-Jun)",Excl. 'case validated',386,24,3,0.777,0.265,2.26,0.0,1.595
+"Nyankunde cluster (hospital, May-Jun)",Linelist cases only,386,24,2,0.518,0.142,1.869,0.0,1.194
+All other zones/periods,Main (incl. 'case validated'),20286,1251,215,1.06,0.928,1.21,0.872,1.264
+All other zones/periods,Excl. 'case validated',20286,1251,210,1.035,0.905,1.184,0.847,1.236
+All other zones/periods,Linelist cases only,20286,1251,142,0.7,0.594,0.824,0.566,0.856
+National,Main (incl. 'case validated'),20672,1259,276,1.335,1.187,1.501,1.051,1.678
+National,Excl. 'case validated',20672,1259,213,1.03,0.902,1.177,0.861,1.232
+National,Linelist cases only,20672,1259,144,0.697,0.592,0.819,0.554,0.844
