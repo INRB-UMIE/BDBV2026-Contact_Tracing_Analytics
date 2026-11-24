@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from ctr_paths import (DATA_DIR as DATA, D as OUT, REPORT_DATE, CUT_LABEL,
-                       PERSON_REGISTRY, CANDIDATE_REGISTRY_FILE)
+                       PERSON_REGISTRY, CANDIDATE_REGISTRY_FILE, input_file)
 
 DATA_DATE = pd.Timestamp(REPORT_DATE)
 EPI_START = pd.Timestamp("2026-04-01")  # from Processing_Code qc config
@@ -84,7 +84,7 @@ def clean_date(s, name, step):
 
 
 # =============================== LINELIST ====================================
-ll = pd.read_csv(os.path.join(DATA, "dhis2_processed_linelist_ctsafe.csv"), low_memory=False)
+ll = pd.read_csv(input_file(DATA, "dhis2_processed_linelist_ctsafe.csv"), low_memory=False)   # .csv or .csv.gz
 note("linelist", "rows in linelist export", len(ll), "all alerts (cases, non-cases, unclassified)")
 ll = reissue_ids(ll, "alert_id", "person_id", "alert_id", "linelist")
 note("linelist", "distinct person_id", ll.person_id.nunique(), "unit of analysis = person_id")
@@ -176,7 +176,7 @@ note("linelist", "cases with no onset date", (persons.is_case & persons.onset.is
      "date of notification used for epi curve timing")
 
 # =============================== CONTACT TRACING ==============================
-ct = pd.read_csv(os.path.join(DATA, "contact_tracing_combined_ctsafe.csv"), low_memory=False)
+ct = pd.read_csv(input_file(DATA, "contact_tracing_combined_ctsafe.csv"), low_memory=False)   # .csv or .csv.gz
 note("CT", "rows in combined CT file (all exports, incl. aged-out contacts)", len(ct),
      f"combined file used (processed file holds only contacts current on {CUT_LABEL})")
 ct = reissue_ids(ct, "source_case_alert_id", "source_case_person_id", "source_case_alert_id", "CT")

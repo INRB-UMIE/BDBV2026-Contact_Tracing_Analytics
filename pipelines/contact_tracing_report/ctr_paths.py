@@ -57,12 +57,20 @@ DATA_ROOT = _resolve("BDBV_DATA_ROOT",
 REQUIRED_INPUTS = ("dhis2_processed_linelist_ctsafe.csv", "contact_tracing_combined_ctsafe.csv")
 
 
+def input_file(folder, name):
+    """Path of a synced input, plain (<name>) or gzipped (<name>.gz). The .gz wins when both
+    exist; if neither does, the plain path is returned so errors name the plain file.
+    pandas reads .gz directly."""
+    gz = os.path.join(folder, name + ".gz")
+    return gz if os.path.exists(gz) else os.path.join(folder, name)
+
+
 def latest_cut(data_root=None):
     """Most recent data/<YYYY-MM-DD>/ folder containing all REQUIRED_INPUTS."""
     base = os.path.join(data_root or DATA_ROOT, "data")
     cuts = sorted(d for d in os.listdir(base)
                   if re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)
-                  and all(os.path.exists(os.path.join(base, d, f)) for f in REQUIRED_INPUTS))
+                  and all(os.path.exists(input_file(os.path.join(base, d), f)) for f in REQUIRED_INPUTS))
     if not cuts:
         raise FileNotFoundError(f"No data/<YYYY-MM-DD>/ folder with {REQUIRED_INPUTS} under {base}")
     return cuts[-1]

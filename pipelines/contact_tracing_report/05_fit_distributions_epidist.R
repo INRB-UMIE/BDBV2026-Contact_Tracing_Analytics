@@ -117,7 +117,9 @@ data_root   <- resolve_data_root()
 latest_cut <- function(root) {
   req <- c("dhis2_processed_linelist_ctsafe.csv", "contact_tracing_combined_ctsafe.csv")
   cuts <- sort(list.files(file.path(root, "data"), pattern = "^\\d{4}-\\d{2}-\\d{2}$"))
-  cuts <- cuts[vapply(cuts, function(d) all(file.exists(file.path(root, "data", d, req))), logical(1))]
+  # each input may be plain (.csv) or gzipped (.csv.gz)
+  has <- function(d, f) { p <- file.path(root, "data", d, f); file.exists(p) || file.exists(paste0(p, ".gz")) }
+  cuts <- cuts[vapply(cuts, function(d) all(vapply(req, function(f) has(d, f), logical(1))), logical(1))]
   if (!length(cuts)) stop("No data/<YYYY-MM-DD>/ folder with both input files under ", root, call. = FALSE)
   tail(cuts, 1)
 }
