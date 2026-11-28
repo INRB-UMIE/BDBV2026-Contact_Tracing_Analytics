@@ -1,0 +1,5 @@
+analysis,label,n_pairs,n_sources,k,sar,wilson_lo,wilson_hi,boot_lo,boot_hi
+Main,Main: linelist + CT 'case confirmed' + CT 'case validated',31828,1619,358,1.125,1.015,1.247,0.915,1.372
+SAR-1,Excluding CT 'case validated',31828,1619,295,0.927,0.827,1.038,0.787,1.092
+SAR-5,Linelist confirmed/probable cases only,31828,1619,198,0.622,0.541,0.715,0.514,0.74
+SAR-6,"Main definition, excluding Nyankunde May-June hospital cluster",31424,1611,297,0.945,0.844,1.058,0.793,1.107
